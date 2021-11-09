@@ -1,11 +1,9 @@
+from re import sub
 from dotenv import load_dotenv
 import os
 import praw
 
-
 load_dotenv()
-# print(os.environ.get('my_user_agent'))
-# print(os.environ.get('my_client_secret'))
 reddit = praw.Reddit(
     client_id=os.environ.get('my_client_id'),
     client_secret=os.environ.get('my_client_secret'),
@@ -15,7 +13,17 @@ reddit = praw.Reddit(
 )
 
 subreddit = reddit.subreddit("SummonSign")
-for submission in subreddit.new(limit=20):
-    for comment in submission.comments:
-        print("-*"*20)
-        print(comment.body)
+
+# retrieval of +karma command
+# for comment in subreddit.stream.comments(skip_existing=True):
+#     comment.body.lower()
+#     if comment.body == "+karma" or comment.body == "\+karma":
+#         print("-*"*20)
+#         print(comment.body)
+#         print(f'by u/{comment.author}')
+
+# for template in subreddit.flair.templates:
+#     print(template)
+# TODO - use regex to extract current karma count
+# for flair in subreddit.flair():
+#     print(flair)
