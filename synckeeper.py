@@ -15,9 +15,8 @@ def getFlair(username):
 
 
 def getKarmaCount(user):
-    # karma ??
-    karma = 0
     karmaCount = re.findall(r'\d+', str(user[1]).replace(' ', ''))
+    karma = 0
     for i in karmaCount:
         karma = int(i)
     return karma
@@ -49,7 +48,7 @@ def setFlair(sub, user, karma, user_css='green'):
 
 
 def syncFlair(sub, user, user_css='green'):
-    reddit.subreddit(sub).flair.set(user[0], user[1], user_css)
+    sub.flair.set(user[0], user[1], user_css)
 
 
 def alreadyAwarded(award_comment):
@@ -103,26 +102,16 @@ reddit = praw.Reddit(
 # main
 subreddit = reddit.subreddit("BeyondTheFog")
 
-# retrieval of +karma command
-for comment in subreddit.stream.comments(skip_existing=True):
-    comment.body.lower()
-    # if comment.body == "+karma" or comment.body == "\+karma":
-    if comment.body.lower().strip().startswith(("+karma", "\\+karma")) and not comment.is_root:
-        if not alreadyAwarded(comment):
-            if comment.is_submitter or comment.parent().is_submitter:
-                try:
-                    user = getFlair(comment.parent().author.name)
-                    karma = getKarmaCount(user)
-                    user_css = getCSSClass(karma)
-                    setFlair(subreddit, user, karma, user_css)
-                except:
-                    failure_reply = str(f"Sorry /u/{comment.author} you can't do that!!")
-                    comment.reply(failure_reply)
-                else:
-                    print("-*"*20)
-                    print(f'by u/{comment.author}')
-                    print('SUCCESS')
-                    success_reply = str(f"Thank you, /u/{comment.author}! You have awarded karma to user /u/{comment.parent().author.name}!")
-                    comment.reply(success_reply)
-            else:
-                print('ERROR')
+try:
+    for flair in reddit.subreddit("SummonSign").flair():
+        user_info = []
+        user_info.append(flair['user'])
+        user_info.append(flair['flair_text'])
+        user_karma = getKarmaCount(user_info)
+        user_css = getCSSClass(user_karma)
+        syncFlair(subreddit, user_info, user_css)
+        print(user_info[0], user_karma, user_css)
+except Exception as e:
+    print(e)
+else:
+    print('SYNCED ! !')
