@@ -1,4 +1,3 @@
-from re import sub
 from dotenv import load_dotenv
 import os
 import praw
@@ -6,12 +5,17 @@ import re
 
 # Functions
 def getFlair(username):
+    # name_formated = f"Redditor(name='{username}')"
     for flair in subreddit.flair():
-        if flair['user'] == username:
-            user_info = []
-            user_info.append(flair['user'])
-            user_info.append(flair['flair_text'])
-            return user_info
+        try:
+            if flair['user'] == str(username):
+                user_info = []
+                user_info.append(flair['user'])
+                user_info.append(flair['flair_text'])
+                return user_info[:]
+        except Exception as e:
+            print(e)
+
 
 
 def getKarmaCount(user):
@@ -44,7 +48,6 @@ def getCSSClass(karma):
 def setFlair(sub, user, karma, user_css='green'):
     newKarma = karma + 1
     new_flair_text = str(f'+{newKarma} Karma')
-    # reddit.subreddit(sub).flair.set(user[0], new_flair_text, user_css)
     sub.flair.set(user[0], new_flair_text, user_css)
 
 
@@ -59,16 +62,10 @@ def alreadyAwarded(award_comment):
     submission = award_comment.submission
     submission.comments.replace_more(limit=None)
     for comment in submission.comments.list():
-        # print(comment.body)
         if comment.body.lower().strip().startswith(("+karma", "\\+karma")):
             if not comment.is_root:
                 if comment.author == from_user and comment.parent().author.name == to_user:
-                    # print(f'from user {from_user}')
-                    # print(f'to user {to_user}')
-                    # print(f'comment.author {comment.author}')
-                    # print(f'comment.parent().author.name {comment.parent().author.name}')
                     count += 1
-    # print(count)
     if count > 1:
         return True
     else:
@@ -112,9 +109,12 @@ for comment in subreddit.stream.comments(skip_existing=True):
             if comment.is_submitter or comment.parent().is_submitter:
                 try:
                     user = getFlair(comment.parent().author.name)
-                    karma = getKarmaCount(user)
-                    user_css = getCSSClass(karma)
-                    setFlair(subreddit, user, karma, user_css)
+                    if len(user) > 0:
+                        karma = getKarmaCount(user)
+                        user_css = getCSSClass(karma)
+                        setFlair(subreddit, user, karma, user_css)
+                    else:
+                        setFlair(subreddit, comment.parent().author.name, 0, subreddit_css_class[3])
                 except:
                     failure_reply = str(f"Sorry /u/{comment.author} you can't do that!!")
                     comment.reply(failure_reply)
