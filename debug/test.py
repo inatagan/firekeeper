@@ -52,6 +52,6 @@ for comment in subreddit.stream.comments(skip_existing=True):
         print(f'to u/{comment.parent().author.name}')
         # print(f'I D  : {comment.id_from_url}')
         if alreadyAwarded(comment):
-            print('Comentario duplicado')
+            print('duplicated')
         else:
-            print('comentario valido')
+            print('invalid')

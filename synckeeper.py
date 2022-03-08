@@ -108,9 +108,10 @@ try:
         user_info.append(flair['user'])
         user_info.append(flair['flair_text'])
         user_karma = getKarmaCount(user_info)
-        user_css = getCSSClass(user_karma)
-        syncFlair(subreddit, user_info, user_css)
-        print(user_info[0], user_karma, user_css)
+        if user_karma > 1:
+            user_css = getCSSClass(user_karma)
+            syncFlair(subreddit, user_info, user_css)
+            print(user_info[0], user_karma, user_css)
 except Exception as e:
     print(e)
 else:

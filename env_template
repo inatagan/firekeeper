@@ -1,0 +1,7 @@
+# you need to install dotenv to use this file: pip install python-dotenv
+my_user_agent="your_bot by u/your_username"
+my_client_id="your_client_secret"
+my_client_secret="your_client_secret"
+my_username="your_bot_username"
+my_password="your_bot_password"
+my_redirect_uri="http://localhost:8080"
