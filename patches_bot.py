@@ -17,7 +17,6 @@ def getFlair(username):
             print(e)
 
 
-
 def getKarmaCount(user):
     # karma ??
     karma = 0
@@ -98,7 +97,7 @@ reddit = praw.Reddit(
 
 
 # main
-subreddit = reddit.subreddit("BeyondTheFog")
+subreddit = reddit.subreddit("PatchesEmporium")
 
 # retrieval of +karma command
 for comment in subreddit.stream.comments(skip_existing=True):
@@ -116,8 +115,8 @@ for comment in subreddit.stream.comments(skip_existing=True):
             bot_reply = comment.reply(f"Sorry /u/{comment.author} you can't award +karma to yourself!!  \n\n moderators of /r/{subreddit}.")
             bot_reply.mod.distinguish(how="yes")
             bot_reply.mod.lock()
-        elif comment.parent().author == '-Firekeeper-':
-            bot_reply = comment.reply(f"Sorry /u/{comment.author} I am not your maiden and you are trying to award +karma to the wrong user!! \n\n moderators of /r/{subreddit}.")
+        elif comment.parent().author == 'Totally-not-Patches':
+            bot_reply = comment.reply(f"Sorry /u/{comment.author} are you a cleric or something? And you are trying to award +karma to the wrong user!! \n\n moderators of /r/{subreddit}.")
             bot_reply.mod.distinguish(how="yes")
             bot_reply.mod.lock()
         elif alreadyAwarded(comment):
