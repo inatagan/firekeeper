@@ -17,7 +17,6 @@ def getFlair(username):
             print(e)
 
 
-
 def getKarmaCount(user):
     # karma ??
     karma = 0
@@ -105,23 +104,23 @@ for comment in subreddit.stream.comments(skip_existing=True):
     comment.body.lower()
     if comment.body.lower().strip().startswith(("+karma", "\\+karma")):
         if comment.is_root:
-            bot_reply = comment.reply(f"F'rgive me /u/{comment.author}, thee can't award +karma from a top leveleth comment!! \n\n ---  \n Mayst thou thy peace discov'r. Prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit} if 't be true thee has't any questions 'r conc'rns.")
+            bot_reply = comment.reply(f"F'rgive me /u/{comment.author}, thee can't award +karma from a top leveleth comment!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
             bot_reply.mod.distinguish(how="yes")
             bot_reply.mod.lock()
         elif not comment.is_submitter and not comment.parent().is_submitter:
-            bot_reply = comment.reply(f"Ashen one /u/{comment.author}, hearest thou my voice, still?!  \n\n ---  \n Mayst thou thy peace discov'r. Prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit} if 't be true thee has't any questions 'r conc'rns.")
+            bot_reply = comment.reply(f"Ashen one /u/{comment.author}, hearest thou my voice, still?!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
             bot_reply.mod.distinguish(how="yes")
             bot_reply.mod.lock()
         elif comment.is_submitter and comment.parent().is_submitter:
-            bot_reply = comment.reply(f"F'rgive me /u/{comment.author}, thee can't award +karma to yourself!!  \n\n ---  \n Mayst thou thy peace discov'r. Prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit} if 't be true thee has't any questions 'r conc'rns.")
+            bot_reply = comment.reply(f"F'rgive me /u/{comment.author}, thee can't award +karma to yourself!!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
             bot_reply.mod.distinguish(how="yes")
             bot_reply.mod.lock()
         elif comment.parent().author == '-Firekeeper-':
-            bot_reply = comment.reply(f"/u/{comment.author}, my thanks for the +karma thou'st given. But Firekeepers are not meant to have +karma. It is forbidden!! \n\n ---  \n Mayst thou thy peace discov'r. Prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit} if 't be true thee has't any questions 'r conc'rns.")
+            bot_reply = comment.reply(f"/u/{comment.author}, my thanks for the +karma thou'st given. But Firekeepers are not meant to have +karma. It is forbidden!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
             bot_reply.mod.distinguish(how="yes")
             bot_reply.mod.lock()
         elif alreadyAwarded(comment):
-            bot_reply = comment.reply(f"F'rgive me /u/{comment.author}, thee has't already award'd +karma to *this* us'r!! \n\n ---  \n Mayst thou thy peace discov'r. Prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit} if 't be true thee has't any questions 'r conc'rns.")
+            bot_reply = comment.reply(f"F'rgive me /u/{comment.author}, thee has't already award'd +karma to *this* us'r!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
             bot_reply.mod.distinguish(how="yes")
             bot_reply.mod.lock() 
         else:
@@ -134,10 +133,10 @@ for comment in subreddit.stream.comments(skip_existing=True):
                 else:
                     setFlair(subreddit, comment.parent().author.name, 0, subreddit_css_class[3])
             except:
-                bot_reply = comment.reply(f"Forgive me /u/{comment.author}, something wenteth wrong!!  \n\n ---  \n Prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit} if 't be true thee has't any questions 'r conc'rns.")
+                bot_reply = comment.reply(f"Forgive me /u/{comment.author}, something wenteth wrong!!  \n\n ***  \n Prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock()
             else:
-                bot_reply = comment.reply(f"/u/{comment.author} my thanks! Thee has't award'd +karma to tarnish'd /u/{comment.parent().author.name}!  \n\n ---  \n Mayst thou thy peace discov'r. Prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit} if 't be true thee has't any questions 'r conc'rns.")
+                bot_reply = comment.reply(f"/u/{comment.author}, my thanks for the +karma thou'st given to us'r /u/{comment.parent().author.name}!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock()
