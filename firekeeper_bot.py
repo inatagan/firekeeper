@@ -3,6 +3,7 @@ import os
 import praw
 import re
 
+
 # Functions
 def getFlair(username):
     # name_formated = f"Redditor(name='{username}')"
@@ -99,6 +100,7 @@ reddit = praw.Reddit(
 # main
 subreddit = reddit.subreddit("BeyondTheFog")
 
+
 # retrieval of +karma command
 for comment in subreddit.stream.comments(skip_existing=True):
     comment.body.lower()
@@ -140,3 +142,7 @@ for comment in subreddit.stream.comments(skip_existing=True):
                 bot_reply = comment.reply(f"/u/{comment.author}, my thanks for the +karma thou'st given to us'r /u/{comment.parent().author.name}!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock()
+                if 'close' in comment.body.lower() and comment.is_submitter:
+                    post = comment.submission
+                    post.mod.flair(text=":sunbro: Duty Fulfilled!", css_class="duty-fulfilled", flair_template_id="186b0ec2-9343-11ec-b414-cefd332e8238")
+

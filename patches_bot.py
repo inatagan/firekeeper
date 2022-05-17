@@ -3,6 +3,7 @@ import os
 import praw
 import re
 
+
 # Functions
 def getFlair(username):
     # name_formated = f"Redditor(name='{username}')"
@@ -99,6 +100,7 @@ reddit = praw.Reddit(
 # main
 subreddit = reddit.subreddit("PatchesEmporium")
 
+
 # retrieval of +karma command
 for comment in subreddit.stream.comments(skip_existing=True):
     comment.body.lower()
@@ -140,4 +142,7 @@ for comment in subreddit.stream.comments(skip_existing=True):
                 bot_reply = comment.reply(f"Cheers for that! /u/{comment.author} you have awarded +karma to user /u/{comment.parent().author.name}!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock()
+                if 'close' in comment.body.lower() and comment.is_submitter:
+                    post = comment.submission
+                    post.mod.flair(text="Complete!", css_class="duty-fulfilled", flair_template_id="a9bcc130-9a8d-11ec-820c-aa2f5c846ca8")
 
