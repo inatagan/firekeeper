@@ -1,11 +1,16 @@
-# firekeeper
+# -Firekeeper-
+This is an extended reddit user-flair management bot, it keeps track of individual points("+karma") granted by/to users to build reputation. These points are then displayed as user-flair in specific communities.
+
+It was originally made for the community [/r/SummonSign](https://www.reddit.com/r/SummonSign/) with a simpler version and then extended to a more robust bot capable of managing the user-flair system between multiple subreddits including [/r/BeyondTheFog](https://www.reddit.com/r/BeyondTheFog/) and more.
 
 ### To run in the background use:
-    nohup python /firekeeper/karmakeeper.py &
+>~~nohup python /firekeeper/karmakeeper.py &~~
+
+Please use and run this bot as a background service with `systemd`.
 
 /home/pi/firekeeper/karmakeeper.py
 
-# Important
+# Helpful links
 
 https://forums.raspberrypi.com/viewtopic.php?t=202146
 

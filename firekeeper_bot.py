@@ -6,16 +6,16 @@ import re
 
 # Functions
 def getFlair(username):
-    # name_formated = f"Redditor(name='{username}')"
-    for flair in subreddit.flair():
-        try:
-            if flair['user'] == str(username):
-                user_info = []
-                user_info.append(flair['user'])
-                user_info.append(flair['flair_text'])
-                return user_info[:]
-        except Exception as e:
+    user_info = []
+    try:
+        for flair in subreddit.flair(redditor=username):
+            user_info.append(flair['user'])
+            user_info.append(flair['flair_text'])
+            user_info.append(flair['flair_css_class'])
+    except Exception as e:
             print(e)
+    finally:
+            return user_info[:]
 
 
 def getKarmaCount(user):
@@ -128,12 +128,13 @@ for comment in subreddit.stream.comments(skip_existing=True):
         else:
             try:
                 user = getFlair(comment.parent().author.name)
-                if len(user) > 0:
+                # if len(user[1]) > 0:
+                if user[2] is not None:
                     karma = getKarmaCount(user)
                     user_css = getCSSClass(karma)
                     setFlair(subreddit, user, karma, user_css)
                 else:
-                    setFlair(subreddit, comment.parent().author.name, 0, subreddit_css_class[3])
+                    setFlair(subreddit, user, 0)
             except:
                 bot_reply = comment.reply(f"Forgive me /u/{comment.author}, something wenteth wrong!!  \n\n ***  \n Prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
