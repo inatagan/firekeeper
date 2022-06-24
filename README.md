@@ -26,7 +26,7 @@ https://stackoverflow.com/questions/2975624/how-to-run-a-python-script-in-the-ba
 
 https://www.nerdynat.com/programming/2019/run-python-on-your-raspberry-pi-as-background-service/
 
-### Reddit discord feed
+### Reddit discord feed (EXTRA)
 https://danwalker.com/python-discord-reddit-feed/
 
 ### create a service with systemd

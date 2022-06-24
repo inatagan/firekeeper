@@ -101,18 +101,20 @@ reddit = praw.Reddit(
 
 # main
 subreddit = reddit.subreddit("BeyondTheFog")
-
+count = 0
 try:
-    for flair in reddit.subreddit("SummonSign").flair():
+    for flair in reddit.subreddit("BeyondTheFog").flair():
         user_info = []
         user_info.append(flair['user'])
         user_info.append(flair['flair_text'])
         user_karma = getKarmaCount(user_info)
-        if user_karma > 1:
+        if user_karma > 800:
+            count += 1
             user_css = getCSSClass(user_karma)
-            syncFlair(subreddit, user_info, user_css)
+            # syncFlair(subreddit, user_info, user_css)
             print(user_info[0], user_karma, user_css)
 except Exception as e:
     print(e)
 else:
     print('SYNCED ! !')
+    print(count)
