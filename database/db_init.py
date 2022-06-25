@@ -35,6 +35,12 @@ SYNC_KARMA = """INSERT INTO karma (
 GET_USER_KARMA = "SELECT COUNT(to_user) FROM karma WHERE to_user = ?;"
 
 
+GET_ALL_TIME_CHAMPIONS = """SELECT to_user, COUNT(to_user) FROM karma GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 10;"""
+
+
+GET_WEEKLY_CHAMPIONS = "SELECT to_user, COUNT(to_user) FROM karma WHERE date BETWEEN datetime('now', '-6 days') AND datetime('now') GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 10;"
+
+
 # Functions
 def connect():
     return sqlite3.connect('summonsign.db')
@@ -60,9 +66,12 @@ def get_user_karma(connection, username):
         return connection.execute(GET_USER_KARMA, (username,)).fetchone()
 
 
-def get_weekly_users(connection):
-    pass
+def get_all_time_champions(connection):
+    with connection:
+        return connection.execute(GET_ALL_TIME_CHAMPIONS).fetchall()
 
 
-def get_all_time_users(connection):
-    pass
+def get_weekly_champions(connection):
+    with connection:
+        return connection.execute(GET_WEEKLY_CHAMPIONS).fetchall()
+
