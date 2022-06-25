@@ -1,9 +1,22 @@
 import re
+from prawcore.exceptions import NotFound
+
+
+#Tuple containing subreddit valid css_class
+subreddit_css_class = (
+    "red",
+    "mod",
+    "green",
+    "green tier2",
+    "green tier3",
+    "green tier4",
+    "green tier5",
+    "green tier6",
+    "green tier7"
+)
 
 
 # class Karma:
-    
-
 #     def __init__(self, from_user='-Firekeeper-', to_user, submission_id=None, submission_title, subreddit, date):
 #         self.from_user = from_user
 #         self.to_user = to_user
@@ -12,18 +25,6 @@ import re
 #         self.platform = getPlatform(self)
 #         self.subreddit = subreddit
 #         self.date = date
-
-def getPlatform(self):
-    if 'ps4' in str(self.submission_title).lower():
-        return 'ps4'
-    if 'ps5' in str(self.submission_title).lower():
-        return 'ps5'
-    if 'psx' in str(self.submission_title).lower():
-        return 'psx'
-    if 'xbox' in str(self.submission_title).lower():
-        return 'xbox'
-    if 'pc' in str(self.submission_title).lower():
-        return 'pc'
 
 
 def getFlair(username, subreddit):
@@ -93,15 +94,36 @@ def alreadyAwarded(award_comment):
         return False
 
 
-#Tuple containing subreddit valid css_class
-subreddit_css_class = (
-    "red",
-    "mod",
-    "green",
-    "green tier2",
-    "green tier3",
-    "green tier4",
-    "green tier5",
-    "green tier6",
-    "green tier7"
-)
+def getPlatform(submission_title):
+    if 'ps4' in str(submission_title).lower():
+        return 'ps4'
+    if 'ps5' in str(submission_title).lower():
+        return 'ps5'
+    if 'psx' in str(submission_title).lower():
+        return 'psx'
+    if 'xbox' in str(submission_title).lower():
+        return 'xbox'
+    if 'pc' in str(submission_title).lower():
+        return 'pc'
+
+
+def user_is_banned(subreddit, username):
+    return any(subreddit.banned(redditor=username))
+
+
+def user_exists(reddit, username):
+    try:
+        reddit.redditor(username).id
+    except (NotFound, AttributeError):
+        return False
+    return True
+
+
+def user_is_valid(reddit, subreddit, username):
+    try:
+        reddit.redditor(username).id
+    except (NotFound, AttributeError):
+        return False
+    else:
+        return not any(subreddit.banned(redditor=username))
+
