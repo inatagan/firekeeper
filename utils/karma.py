@@ -1,5 +1,6 @@
 import re
 from prawcore.exceptions import NotFound
+from database import db_init as db
 
 
 #Tuple containing subreddit valid css_class
@@ -40,8 +41,19 @@ def getFlair(username, subreddit):
             return user_info[:]
 
 
+def getCommentFlair(comment):
+    user_info = []
+    try:
+        user_info.append(comment.author.name)
+        user_info.append(comment.author_flair_text)
+        user_info.append(comment.author_flair_css_class)
+    except Exception as e:
+        print(e)
+    finally:
+        return user_info[:]
+
+
 def getKarmaCount(user):
-    # karma ??
     karma = 0
     karmaCount = re.findall(r'\d+', str(user[1]).replace(' ', ''))
     for i in karmaCount:
@@ -75,6 +87,10 @@ def setFlair(sub, user, karma, user_css='green'):
 
 def syncFlair(reddit, sub, user, user_css='green'):
     reddit.subreddit(sub).flair.set(user[0], user[1], user_css)
+
+
+def syncFlairFromDB(reddit, sub, user):
+    reddit.subreddit(sub).flair.set(user[0], user[1], user[2])
 
 
 def alreadyAwarded(award_comment):
@@ -127,3 +143,16 @@ def user_is_valid(reddit, subreddit, username):
     else:
         return not any(subreddit.banned(redditor=username))
 
+
+def getUserFromDB(username):
+    connection = db.connect()
+    user_info = []
+    try:
+        user_karma = db.get_user_karma(connection, username)
+        user_info.append(username)
+        user_info.append(str(f'+{user_karma} Karma'))
+        user_info.append(getCSSClass(user_karma))
+    except Exception as e:
+        print(e)
+    finally:
+        return user_info[:]

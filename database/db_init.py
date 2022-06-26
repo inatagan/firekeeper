@@ -3,7 +3,7 @@ import sqlite3
 
 # SQL Queries
 CREATE_KARMA_TABLE = """CREATE TABLE IF NOT EXISTS karma (
-            id INTEGER PRIMARY KEY,
+            id INTEGER NOT NULL PRIMARY KEY,
             from_user TEXT NOT NULL,
             to_user TEXT NOT NULL,
             submission_id TEXT,
@@ -63,7 +63,7 @@ def sync_karma(connection, from_user, to_user, subreddit):
 
 def get_user_karma(connection, username):
     with connection:
-        return connection.execute(GET_USER_KARMA, (username,)).fetchone()
+        return connection.execute(GET_USER_KARMA, (username,)).fetchone()[0]
 
 
 def get_all_time_champions(connection):

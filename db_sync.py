@@ -37,7 +37,7 @@ def main():
 
 
                 if user_karma > 1:
-                    db_karma_count = db.get_user_karma(connection, flair['user'].name)[0]
+                    db_karma_count = db.get_user_karma(connection, flair['user'].name)
                     if user_karma > db_karma_count:
                         # print(f'{user_info[0]}, {user_karma} DB = {db_karma_count}')
                         for i in range(db_karma_count, user_karma):

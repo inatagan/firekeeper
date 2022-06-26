@@ -112,6 +112,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.env_flairsync
 
 # Spyder project settings
 .spyderproject
