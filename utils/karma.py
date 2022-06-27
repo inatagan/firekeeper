@@ -123,6 +123,10 @@ def getPlatform(submission_title):
         return 'pc'
 
 
+def getSubmissionId(comment):
+    return comment.link_id
+
+
 def user_is_banned(subreddit, username):
     return any(subreddit.banned(redditor=username))
 

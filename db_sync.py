@@ -4,8 +4,6 @@ import praw
 from utils import karma
 from database import db_init as db
 from sqlite3 import IntegrityError
-from progress.bar import Bar
-
 
 
 #Load user secret
@@ -24,9 +22,9 @@ def main():
     connection = db.connect()
     db.create_tables(connection)
     try:
-        for flair in Bar('Processing').iter(subreddit.flair()):
+        for flair in subreddit.flair():
             if not karma.user_is_valid(reddit, subreddit, flair['user'].name):
-                print(f"userflair deleted: {flair['user'].name}")
+                print(f"userflair deleted: {flair['user'].name} : {flair['flair_text']}")
                 subreddit.flair.delete(redditor=flair['user'].name)
             else:
 
@@ -45,6 +43,7 @@ def main():
                                 db.sync_karma(connection, '-Firekeeper-', flair['user'].name, 'SummonSign')
                             except IntegrityError as err:
                                 print(err)
+                        print(f"userflair synced: {flair['user'].name} : {flair['flair_text']}")
 
 
     except Exception as e:
@@ -55,9 +54,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-    # subreddit = reddit.subreddit("SummonSign")
-    # print(f'Suspended user 0xdefec8 = {karma.user_is_valid(reddit, subreddit, "0xdefec8")}')
-    # print(f'Shadowbanned user Thewalrusworld = {karma.user_is_valid(reddit, subreddit, "Thewalrusworld")}')
-    # print(f'Banned user eazeaze = {karma.user_is_valid(reddit, subreddit, "eazeaze")}')
-    # print(f'Valid user FOS = {karma.user_is_valid(reddit, subreddit, "FatOldSunbro")}')
 

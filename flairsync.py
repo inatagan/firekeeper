@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 import praw
 from utils import karma
-import sys
+# import sys
 
 
 #Load user secret
@@ -16,16 +16,19 @@ reddit = praw.Reddit(
 )
 
 
-def main():
+def main(username):
+    # try:
+    #     username = sys.argv[1]
+    # except IndexError:
+    #     print("Error: Missing Arguments!")
+    # else:
     try:
-        username = sys.argv[1]
-    except IndexError:
-        print("Error: Missing Arguments!")
-    else:
         user = karma.getUserFromDB(username)
         sub_list = ('SummonSign', 'BeyondTheFog')
         for sub in sub_list:
             karma.syncFlairFromDB(reddit, sub, user)
+    except Exception as err:
+        return err
 
 
 if __name__ == '__main__':

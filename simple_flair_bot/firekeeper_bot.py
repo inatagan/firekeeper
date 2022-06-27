@@ -18,6 +18,18 @@ def getFlair(username):
             return user_info[:]
 
 
+def getCommentFlair(comment):
+    user_info = []
+    try:
+        user_info.append(comment.author.name)
+        user_info.append(comment.author_flair_text)
+        user_info.append(comment.author_flair_css_class)
+    except Exception as e:
+        print(e)
+    finally:
+        return user_info[:]
+
+
 def getKarmaCount(user):
     # karma ??
     karma = 0
@@ -98,52 +110,54 @@ reddit = praw.Reddit(
 
 
 # main
-subreddit = reddit.subreddit("BeyondTheFog")
-
-
-# retrieval of +karma command
-for comment in subreddit.stream.comments(skip_existing=True):
-    comment.body.lower()
-    if comment.body.lower().strip().startswith(("+karma", "\\+karma")):
-        if comment.is_root:
-            bot_reply = comment.reply(f"F'rgive me /u/{comment.author}, thee can't award +karma from a top leveleth comment!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
-            bot_reply.mod.distinguish(how="yes")
-            bot_reply.mod.lock()
-        elif not comment.is_submitter and not comment.parent().is_submitter:
-            bot_reply = comment.reply(f"Ashen one /u/{comment.author}, hearest thou my voice, still?!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
-            bot_reply.mod.distinguish(how="yes")
-            bot_reply.mod.lock()
-        elif comment.is_submitter and comment.parent().is_submitter:
-            bot_reply = comment.reply(f"F'rgive me /u/{comment.author}, thee can't award +karma to yourself!!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
-            bot_reply.mod.distinguish(how="yes")
-            bot_reply.mod.lock()
-        elif comment.parent().author == '-Firekeeper-':
-            bot_reply = comment.reply(f"/u/{comment.author}, my thanks for the +karma thou'st given. But Firekeepers are not meant to have +karma. It is forbidden!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
-            bot_reply.mod.distinguish(how="yes")
-            bot_reply.mod.lock()
-        elif alreadyAwarded(comment):
-            bot_reply = comment.reply(f"F'rgive me /u/{comment.author}, thee has't already award'd +karma to *this* us'r!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
-            bot_reply.mod.distinguish(how="yes")
-            bot_reply.mod.lock() 
-        else:
-            try:
-                user = getFlair(comment.parent().author.name)
-                # if len(user[1]) > 0:
-                if user[2] is not None:
-                    karma = getKarmaCount(user)
-                    user_css = getCSSClass(karma)
-                    setFlair(subreddit, user, karma, user_css)
-                else:
-                    setFlair(subreddit, user, 0)
-            except:
-                bot_reply = comment.reply(f"Forgive me /u/{comment.author}, something wenteth wrong!!  \n\n ***  \n Prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
+def main():
+    subreddit = reddit.subreddit("BeyondTheFog")
+    # retrieval of +karma command
+    for comment in subreddit.stream.comments(skip_existing=True):
+        comment.body.lower()
+        if comment.body.lower().strip().startswith(("+karma", "\\+karma")):
+            if comment.is_root:
+                bot_reply = comment.reply(f"F'rgive me /u/{comment.author}, thee can't award +karma from a top leveleth comment!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock()
+            elif not comment.is_submitter and not comment.parent().is_submitter:
+                bot_reply = comment.reply(f"Ashen one /u/{comment.author}, hearest thou my voice, still?!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
+                bot_reply.mod.distinguish(how="yes")
+                bot_reply.mod.lock()
+            elif comment.is_submitter and comment.parent().is_submitter:
+                bot_reply = comment.reply(f"F'rgive me /u/{comment.author}, thee can't award +karma to yourself!!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
+                bot_reply.mod.distinguish(how="yes")
+                bot_reply.mod.lock()
+            elif comment.parent().author == '-Firekeeper-':
+                bot_reply = comment.reply(f"/u/{comment.author}, my thanks for the +karma thou'st given. But Firekeepers are not meant to have +karma. It is forbidden!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
+                bot_reply.mod.distinguish(how="yes")
+                bot_reply.mod.lock()
+            elif alreadyAwarded(comment):
+                bot_reply = comment.reply(f"F'rgive me /u/{comment.author}, thee has't already award'd +karma to *this* us'r!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
+                bot_reply.mod.distinguish(how="yes")
+                bot_reply.mod.lock() 
             else:
-                bot_reply = comment.reply(f"/u/{comment.author}, my thanks for the +karma thou'st given to us'r /u/{comment.parent().author.name}!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
-                bot_reply.mod.distinguish(how="yes")
-                bot_reply.mod.lock()
-                if 'close' in comment.body.lower() and comment.is_submitter:
-                    post = comment.submission
-                    post.mod.flair(text=":sunbro: Duty Fulfilled!", css_class="duty-fulfilled", flair_template_id="186b0ec2-9343-11ec-b414-cefd332e8238")
+                try:
+                    user = getCommentFlair(comment.parent())
+                    if user[2] is not None:
+                        karma = getKarmaCount(user)
+                        user_css = getCSSClass(karma)
+                        setFlair(subreddit, user, karma, user_css)
+                    else:
+                        setFlair(subreddit, user, 0)
+                except:
+                    bot_reply = comment.reply(f"Forgive me /u/{comment.author}, something wenteth wrong!!  \n\n ***  \n Prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
+                    bot_reply.mod.distinguish(how="yes")
+                    bot_reply.mod.lock()
+                else:
+                    bot_reply = comment.reply(f"/u/{comment.author}, my thanks for the +karma thou'st given to us'r /u/{comment.parent().author.name}!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
+                    bot_reply.mod.distinguish(how="yes")
+                    bot_reply.mod.lock()
+                    if 'close' in comment.body.lower() and comment.is_submitter:
+                        post = comment.submission
+                        post.mod.flair(text=":sunbro: Duty Fulfilled!", css_class="duty-fulfilled", flair_template_id="186b0ec2-9343-11ec-b414-cefd332e8238")
+
+
+if __name__ == '__main__':
+    main()
 
