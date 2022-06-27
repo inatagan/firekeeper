@@ -13,16 +13,18 @@ def main():
         sub = sys.argv[4]
     except IndexError:
         print("Error: Missing Arguments!")
-    else:
+    try:
         connection = db.connect()
         for i in range(karma):
             try:
                 db.sync_karma_plat(connection, '-Firekeeper-', username, plat, sub)
             except IntegrityError as err:
                 print(err)
-        db_karma = karma.getUserFromDB(username)
+        db_karma = db.get_user_karma(connection, username)
         print(f"userflair synced: {username} : {db_karma}")
         flairsync.main(username)
+    except Exception as err:
+        print(err)
 
 
 if __name__ == '__main__':

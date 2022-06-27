@@ -6,7 +6,6 @@ from database import db_init as db
 from sqlite3 import IntegrityError
 
 
-#Load user secret
 load_dotenv()
 reddit = praw.Reddit(
     client_id=os.environ.get('my_client_id'),

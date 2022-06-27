@@ -2,10 +2,8 @@ from dotenv import load_dotenv
 import os
 import praw
 from utils import karma
-# import sys
 
 
-#Load user secret
 load_dotenv('.env_flairsync')
 reddit = praw.Reddit(
     client_id=os.environ.get('my_client_id'),
@@ -17,11 +15,6 @@ reddit = praw.Reddit(
 
 
 def main(username):
-    # try:
-    #     username = sys.argv[1]
-    # except IndexError:
-    #     print("Error: Missing Arguments!")
-    # else:
     try:
         user = karma.getUserFromDB(username)
         sub_list = ('SummonSign', 'BeyondTheFog')
@@ -32,5 +25,5 @@ def main(username):
 
 
 if __name__ == '__main__':
-    main()
+    main('FatOldSunbro')
 
