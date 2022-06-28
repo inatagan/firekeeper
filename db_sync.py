@@ -45,8 +45,8 @@ def main():
                         print(f"userflair synced: {flair['user'].name} : {flair['flair_text']}")
 
 
-    except Exception as e:
-        print(e)
+    except Exception as err:
+        print(err)
     else:
         print('OMG IT WORKED!!\n\n ! ! SYNCED ! !')
 
