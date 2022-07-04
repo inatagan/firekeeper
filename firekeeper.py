@@ -38,8 +38,8 @@ def main():
                 bot_reply.mod.lock()
             else:
                 try:
-                    plat = k.getPlatform(comment.submission.title)
-                    k.addKarmaToDB(comment.author.name, comment.parent().author.name, comment.link_id, comment.id, comment.submission.title, plat, comment.subreddit.display_name)
+                    plat = k.get_platform(comment.submission.title)
+                    k.add_karma_to_db(comment.author.name, comment.parent().author.name, comment.link_id, comment.id, comment.submission.title, plat, comment.subreddit.display_name)
                 except IntegrityError:
                     bot_reply = comment.reply(body=f"F'rgive me /u/{comment.author}, thee has't already award'd +karma to *this* us'r!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
                     bot_reply.mod.distinguish(how="yes")

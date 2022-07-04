@@ -51,7 +51,7 @@ def main():
             except Exception as err:
                 print(f'flair removal failed: {err}')
         else:
-            user_karma = karma.getKarmaCountFromDict(value)
+            user_karma = karma.get_karma_from_dict(value)
             if user_karma > 1:
                 db_karma_count = db.get_user_karma(connection, key)
                 if user_karma > db_karma_count:

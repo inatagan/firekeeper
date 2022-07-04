@@ -38,8 +38,8 @@ def main():
                 bot_reply.mod.lock()
             else:
                 try:
-                    plat = k.getPlatform(comment.submission.title)
-                    k.addKarmaToDB(comment.author.name, comment.parent().author.name, comment.link_id, comment.id, comment.submission.title, plat, comment.subreddit.display_name)
+                    plat = k.get_platform(comment.submission.title)
+                    k.add_karma_to_db(comment.author.name, comment.parent().author.name, comment.link_id, comment.id, comment.submission.title, plat, comment.subreddit.display_name)
                 except IntegrityError:
                     bot_reply = comment.reply(body=f"Fouls tarnished /u/{comment.author}, thee has't already award'd +karma to *this* user!! \n\n ***  \n Good-bye, should you come by the Frenzied Flame, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}.")
                     bot_reply.mod.distinguish(how="yes")

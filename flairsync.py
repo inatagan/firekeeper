@@ -16,8 +16,8 @@ reddit = praw.Reddit(
 
 def main(username):
     try:
-        user_karma = karma.getKarmaFromDB(username)
-        user_css =  karma.getCSSClass(user_karma)
+        user_karma = karma.get_karma_from_db(username)
+        user_css =  karma.get_css_class(user_karma)
     except Exception as err:
         return err
     else:

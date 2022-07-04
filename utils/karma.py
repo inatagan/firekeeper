@@ -18,7 +18,7 @@ subreddit_css_class = (
 )
 
 
-def getFlair(username, subreddit):
+def get_flair(username, subreddit):
     user_info = []
     try:
         for flair in subreddit.flair(redditor=username):
@@ -31,7 +31,7 @@ def getFlair(username, subreddit):
             return user_info[:]
 
 
-def getCommentFlair(comment):
+def get_comment_flair(comment):
     user_info = []
     try:
         user_info.append(comment.author.name)
@@ -43,14 +43,14 @@ def getCommentFlair(comment):
         return user_info[:]
 
 
-def getKarmaCount(user):
+def get_karma_count(user):
     karma = 0
     karmaCount = re.findall(r'\d+', str(user[1]).replace(' ', ''))
     for i in karmaCount:
         karma = int(i)
     return karma
 
-def getKarmaCountFromDict(user_value):
+def get_karma_from_dict(user_value):
     karma = 0
     karmaCount = re.findall(r'\d+', str(user_value).replace(' ', ''))
     for i in karmaCount:
@@ -58,13 +58,13 @@ def getKarmaCountFromDict(user_value):
     return karma
 
 
-def getKarmaFromDB(username):
+def get_karma_from_db(username):
     connection = db.connect()
     karma = db.get_user_karma(connection, username)
     return int(karma)
 
 
-def getCSSClass(karma):
+def get_css_class(karma):
     if karma >= 1000:
         user_css = subreddit_css_class[8]
     elif karma >= 500:
@@ -82,21 +82,21 @@ def getCSSClass(karma):
     return user_css
 
 
-def setFlair(sub, user, karma, user_css='green'):
+def set_flair(sub, user, karma, user_css='green'):
     newKarma = karma + 1
     new_flair_text = str(f'+{newKarma} Karma')
     sub.flair.set(user[0], new_flair_text, user_css)
 
 
-def syncFlair(reddit, sub, user, user_css='green'):
+def sync_flair(reddit, sub, user, user_css='green'):
     reddit.subreddit(sub).flair.set(user[0], user[1], user_css)
 
 
-def syncFlairFromDB(reddit, sub, user):
+def sync_flair_from_db(reddit, sub, user):
     reddit.subreddit(sub).flair.set(user[0], user[1], user[2])
 
 
-def alreadyAwarded(award_comment):
+def already_awarded(award_comment):
     count = 0
     to_user = award_comment.parent().author
     from_user = award_comment.author
@@ -113,7 +113,7 @@ def alreadyAwarded(award_comment):
         return False
 
 
-def getPlatform(submission_title):
+def get_platform(submission_title):
     if 'ps4' in str(submission_title).lower():
         return 'ps4'
     if 'ps5' in str(submission_title).lower():
@@ -126,7 +126,7 @@ def getPlatform(submission_title):
         return 'pc'
 
 
-def getSubmissionId(comment):
+def get_submission_id(comment):
     return comment.link_id
 
 
@@ -151,7 +151,7 @@ def user_is_valid(reddit, subreddit, username):
         return not any(subreddit.banned(redditor=username))
 
 
-def getUserFromDB(username):
+def get_user_from_db(username):
     connection = db.connect()
     user_info = []
     try:
@@ -159,14 +159,16 @@ def getUserFromDB(username):
         user_info.append(username)
         # user_info.append(str(f'+{user_karma} Karma'))
         user_info.append(user_karma)
-        user_info.append(getCSSClass(user_karma))
+        user_info.append(get_css_class(user_karma))
     except Exception as e:
         print(e)
     finally:
         return user_info[:]
 
 
-def addKarmaToDB(from_user, to_user, submission_id, comment_id, submission_title, platform, subreddit):
+def add_karma_to_db(
+        from_user, to_user, submission_id, comment_id, 
+        submission_title, platform, subreddit):
     connection = db.connect()
     db.create_tables(connection)
     try:
