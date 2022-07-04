@@ -1,6 +1,7 @@
 import re
 from prawcore.exceptions import NotFound
 from database import db_init as db
+from sqlite3 import IntegrityError
 
 
 #Tuple containing subreddit valid css_class
@@ -15,17 +16,6 @@ subreddit_css_class = (
     "green tier6",
     "green tier7"
 )
-
-
-# class Karma:
-#     def __init__(self, from_user='-Firekeeper-', to_user, submission_id=None, submission_title, subreddit, date):
-#         self.from_user = from_user
-#         self.to_user = to_user
-#         self.submission_id = submission_id
-#         self.submission_title = submission_title
-#         self.platform = getPlatform(self)
-#         self.subreddit = subreddit
-#         self.date = date
 
 
 def getFlair(username, subreddit):
@@ -59,6 +49,19 @@ def getKarmaCount(user):
     for i in karmaCount:
         karma = int(i)
     return karma
+
+def getKarmaCountFromDict(user_value):
+    karma = 0
+    karmaCount = re.findall(r'\d+', str(user_value).replace(' ', ''))
+    for i in karmaCount:
+        karma = int(i)
+    return karma
+
+
+def getKarmaFromDB(username):
+    connection = db.connect()
+    karma = db.get_user_karma(connection, username)
+    return int(karma)
 
 
 def getCSSClass(karma):
@@ -154,9 +157,40 @@ def getUserFromDB(username):
     try:
         user_karma = db.get_user_karma(connection, username)
         user_info.append(username)
-        user_info.append(str(f'+{user_karma} Karma'))
+        # user_info.append(str(f'+{user_karma} Karma'))
+        user_info.append(user_karma)
         user_info.append(getCSSClass(user_karma))
     except Exception as e:
         print(e)
     finally:
         return user_info[:]
+
+
+def addKarmaToDB(from_user, to_user, submission_id, comment_id, submission_title, platform, subreddit):
+    connection = db.connect()
+    db.create_tables(connection)
+    try:
+        db.add_karma(connection,from_user, to_user, submission_id, comment_id, submission_title, platform, subreddit)
+    except IntegrityError:
+        raise
+    except Exception:
+        raise
+
+
+def delete_all_userflair(reddit, sub):
+    subreddit = reddit.subreddit(sub)
+    deleted = subreddit.flair.delete_all()
+    return deleted
+
+
+def can_change_flair(reddit, sub, username):
+    user_info = tuple(reddit.subreddit(sub).flair(redditor=username))
+    user_css = user_info[0]['flair_css_class']
+    try:
+        if 'red' in user_css or 'mod' in user_css:
+            return False
+        else:
+            return True
+    except TypeError:
+        return True
+

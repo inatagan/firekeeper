@@ -4,6 +4,10 @@ import praw
 from utils import karma
 from database import db_init as db
 from sqlite3 import IntegrityError
+from progress.bar import ShadyBar
+from progress.spinner import LineSpinner
+
+
 
 
 load_dotenv()
@@ -17,40 +21,50 @@ reddit = praw.Reddit(
 
 
 def main():
-    subreddit = reddit.subreddit("SummonSign")
+
+
+    subreddit = reddit.subreddit("BeyondTheFog")
     connection = db.connect()
     db.create_tables(connection)
-    try:
-        for flair in subreddit.flair():
-            if not karma.user_is_valid(reddit, subreddit, flair['user'].name):
-                print(f"userflair deleted: {flair['user'].name} : {flair['flair_text']}")
-                subreddit.flair.delete(redditor=flair['user'].name)
-            else:
-
-                user_info = []
-                user_info.append(flair['user'])
-                user_info.append(flair['flair_text'])
-                user_karma = karma.getKarmaCount(user_info)
+    flair_list = {}
+    spinner = LineSpinner('Loading.. ')
+    
+    
+    for flair in subreddit.flair():
+        # Use the command bellow to create an quick and dirty flair list for reference:
+        # unbuffer python3 db_sync.py 2>&1 | tee -a sub_flair_list.log
+        # tup = (flair['user'].name, flair['flair_text'])
+        # print(tup)
 
 
-                if user_karma > 1:
-                    db_karma_count = db.get_user_karma(connection, flair['user'].name)
-                    if user_karma > db_karma_count:
-                        # print(f'{user_info[0]}, {user_karma} DB = {db_karma_count}')
-                        for i in range(db_karma_count, user_karma):
-                            try:
-                                db.sync_karma(connection, '-Firekeeper-', flair['user'].name, 'SummonSign')
-                            except IntegrityError as err:
-                                print(err)
-                        print(f"userflair synced: {flair['user'].name} : {flair['flair_text']}")
-
-
-    except Exception as err:
-        print(err)
-    else:
-        print('OMG IT WORKED!!\n\n ! ! SYNCED ! !')
+        key = flair['user'].name
+        value = flair['flair_text']
+        flair_list[key] = value
+        spinner.next()
+    
+    
+    for key, value in ShadyBar('Processing').iter(flair_list.items()):
+        if not karma.user_is_valid(reddit, subreddit, key):
+            print(f"userflair deleted: {key} : {value}")
+            try:
+                subreddit.flair.delete(redditor=key)
+            except Exception as err:
+                print(f'flair removal failed: {err}')
+        else:
+            user_karma = karma.getKarmaCountFromDict(value)
+            if user_karma > 1:
+                db_karma_count = db.get_user_karma(connection, key)
+                if user_karma > db_karma_count:
+                    for i in range(db_karma_count, user_karma):
+                        try:
+                            db.sync_karma(connection, '-Firekeeper-', key, subreddit.display_name)
+                        except IntegrityError as err:
+                            print(err)
+                    print(f"userflair synced: {key} : {value}")
+    print('OMG IT WORKED!!\n\n ! ! SYNCED ! !')
 
 
 if __name__ == '__main__':
     main()
+
 

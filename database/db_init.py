@@ -7,6 +7,7 @@ CREATE_KARMA_TABLE = """CREATE TABLE IF NOT EXISTS karma (
             from_user TEXT NOT NULL,
             to_user TEXT NOT NULL,
             submission_id TEXT,
+            comment_id TEXT,
             submission_title TEXT,
             platform TEXT,
             subreddit TEXT,
@@ -19,10 +20,11 @@ INSERT_KARMA = """INSERT INTO karma (
             from_user,
             to_user,
             submission_id,
+            comment_id,
             submission_title,
             platform,
             subreddit)
-            VALUES (?, ?, ?, ?, ?, ?);"""
+            VALUES (?, ?, ?, ?, ?, ?, ?);"""
 
 
 SYNC_KARMA_PLAT = """INSERT INTO karma (
@@ -59,9 +61,9 @@ def create_tables(connection):
         connection.execute(CREATE_KARMA_TABLE)
 
 
-def add_karma(connection, from_user, to_user, submission_id, submission_title, platform, subreddit):
+def add_karma(connection, from_user, to_user, submission_id, comment_id, submission_title, platform, subreddit):
     with connection:
-        connection.execute(INSERT_KARMA, (from_user, to_user, submission_id, submission_title, platform, subreddit))
+        connection.execute(INSERT_KARMA, (from_user, to_user, submission_id, comment_id, submission_title, platform, subreddit))
 
 
 def sync_karma(connection, from_user, to_user, subreddit):

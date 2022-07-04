@@ -4,17 +4,6 @@ import praw
 import re
 
 
-def getFlair(username):
-    user_info = []
-    try:
-        for flair in subreddit.flair(redditor=username):
-            user_info.append(flair['user'])
-            user_info.append(flair['flair_text'])
-            user_info.append(flair['flair_css_class'])
-    except Exception as e:
-            print(e)
-    finally:
-            return user_info[:]
 
 
 def getCommentFlair(comment):
@@ -61,10 +50,6 @@ def setFlair(sub, user, karma, user_css='green'):
     sub.flair.set(user[0], new_flair_text, user_css)
 
 
-def syncFlair(sub, user, user_css='green'):
-    reddit.subreddit(sub).flair.set(user[0], user[1], user_css)
-
-
 def alreadyAwarded(award_comment):
     count = 0
     to_user = award_comment.parent().author
@@ -97,11 +82,11 @@ subreddit_css_class = (
 
 load_dotenv()
 reddit = praw.Reddit(
-    client_id=os.environ.get('my_client_id'),
-    client_secret=os.environ.get('my_client_secret'),
-    user_agent=os.environ.get('my_user_agent'),
-    username=os.environ.get('my_username'),
-    password=os.environ.get('my_password'),
+    client_id=os.environ.get('patches_client_id'),
+    client_secret=os.environ.get('patches_client_secret'),
+    user_agent=os.environ.get('patches_user_agent'),
+    username=os.environ.get('patches_username'),
+    password=os.environ.get('patches_password'),
 )
 
 

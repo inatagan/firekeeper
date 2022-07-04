@@ -15,10 +15,13 @@ def main():
         print("Error: Missing Arguments!")
     try:
         connection = db.connect()
+        db.create_tables(connection)
         for i in range(karma):
             try:
                 db.sync_karma_plat(connection, '-Firekeeper-', username, plat, sub)
             except IntegrityError as err:
+                print(err)
+            except Exception as err:
                 print(err)
         db_karma = db.get_user_karma(connection, username)
         print(f"userflair synced: {username} : {db_karma}")

@@ -1,5 +1,5 @@
 [Unit]
-Description=Firekeeper Karma Bot for SummonSign
+Description=Melina Karma Bot for BeyondTheFog
 After=multi-user.target
 
 StartLimitIntervalSec=500
@@ -10,7 +10,7 @@ StartLimitBurst=5
 Restart=on-failure
 RestartSec=5s
 Type=idle  
-ExecStart=/usr/bin/python /home/$USER/firekeeper/firekeeper.py  
+ExecStart=/usr/bin/python /home/$USER/firekeeper/melina.py  
 User=pi  
 
 [Install]  

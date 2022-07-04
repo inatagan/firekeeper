@@ -22,7 +22,8 @@ except FileNotFoundError:
 load_dotenv()
 
 webhook_url = os.environ.get('my_webhook_2')
-subreddit   = os.environ.get('subreddit_2') # can be chained with + (example: python+webdev)
+subreddit   = os.environ.get('subreddit_2') 
+# can be chained with + (example: python+webdev)
 
 req = requests.get(f'https://www.reddit.com/r/{subreddit}/new/.json', headers={
     "Cache-Control": "no-cache",
