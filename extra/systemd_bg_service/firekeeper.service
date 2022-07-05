@@ -10,8 +10,9 @@ StartLimitBurst=5
 Restart=on-failure
 RestartSec=5s
 Type=idle  
+WorkingDirectory= /home/$USER/firekeeper/  
 ExecStart=/usr/bin/python /home/$USER/firekeeper/firekeeper.py  
-User=pi  
+User=$USER  
 
 [Install]  
 WantedBy=multi-user.target

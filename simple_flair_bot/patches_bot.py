@@ -47,7 +47,7 @@ def get_css_class(karma):
 def set_flair(sub, user, karma, user_css='green'):
     newKarma = karma + 1
     new_flair_text = str(f'+{newKarma} Karma')
-    sub.flair.set(user[0], new_flair_text, user_css)
+    sub.flair.set(user[0], text=new_flair_text, css_class=user_css)
 
 
 def already_awarded(award_comment):
@@ -96,23 +96,23 @@ def main():
         comment.body.lower()
         if comment.body.lower().strip().startswith(("+karma", "\\+karma")):
             if comment.is_root:
-                bot_reply = comment.reply(f"Oi /u/{comment.author} just hold your horses a moment, you can't award +karma from a top level comment!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
+                bot_reply = comment.reply(body=f"Oi /u/{comment.author} just hold your horses a moment, you can't award +karma from a top level comment!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock()
             elif not comment.is_submitter and not comment.parent().is_submitter:
-                bot_reply = comment.reply(f"Stingy little beggar /u/{comment.author}, you can't do that. Try to find it in your heart next time, eh?!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
+                bot_reply = comment.reply(body=f"Stingy little beggar /u/{comment.author}, you can't do that. Try to find it in your heart next time, eh?!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock()
             elif comment.is_submitter and comment.parent().is_submitter:
-                bot_reply = comment.reply(f"Shame on you, you insatiable wench /u/{comment.author}, you can't award +karma to yourself greedy guts!!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
+                bot_reply = comment.reply(body=f"Shame on you, you insatiable wench /u/{comment.author}, you can't award +karma to yourself greedy guts!!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock()
             elif comment.parent().author == 'Totally-not-Patches':
-                bot_reply = comment.reply(f"Sorry /u/{comment.author} are you a cleric or something? And you are trying to award +karma to the wrong user!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
+                bot_reply = comment.reply(body=f"Sorry /u/{comment.author} are you a cleric or something? And you are trying to award +karma to the wrong user!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock()
             elif already_awarded(comment):
-                bot_reply = comment.reply(f"Thought you could outwit an onion? /u/{comment.author} you have already awarded +karma to *this* user!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
+                bot_reply = comment.reply(body=f"Thought you could outwit an onion? /u/{comment.author} you have already awarded +karma to *this* user!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock() 
             else:
@@ -125,11 +125,11 @@ def main():
                     else:
                         set_flair(subreddit, user, 0)
                 except:
-                    bot_reply = comment.reply(f"Shame on you, you rotten cleric /u/{comment.author} something went wrong! But I'll forgive you. View it as a learning experience. At any rate, it's nice just to see you safe!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
+                    bot_reply = comment.reply(body=f"Shame on you, you rotten cleric /u/{comment.author} something went wrong! But I'll forgive you. View it as a learning experience. At any rate, it's nice just to see you safe!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
                     bot_reply.mod.distinguish(how="yes")
                     bot_reply.mod.lock()
                 else:
-                    bot_reply = comment.reply(f"Cheers for that! /u/{comment.author} you have awarded +karma to user /u/{comment.parent().author.name}!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
+                    bot_reply = comment.reply(body=f"Cheers for that! /u/{comment.author} you have awarded +karma to user /u/{comment.parent().author.name}!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
                     bot_reply.mod.distinguish(how="yes")
                     bot_reply.mod.lock()
                     if 'close' in comment.body.lower() and comment.is_submitter:

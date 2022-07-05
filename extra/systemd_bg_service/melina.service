@@ -7,11 +7,12 @@ StartLimitBurst=5
 
 
 [Service]
-Restart=on-failure
-RestartSec=5s
+Restart=on-failure  
+RestartSec=5s  
 Type=idle  
+WorkingDirectory= /home/$USER/firekeeper/  
 ExecStart=/usr/bin/python /home/$USER/firekeeper/melina.py  
-User=pi  
+User=$USER  
 
 [Install]  
 WantedBy=multi-user.target

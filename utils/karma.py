@@ -85,15 +85,15 @@ def get_css_class(karma):
 def set_flair(sub, user, karma, user_css='green'):
     newKarma = karma + 1
     new_flair_text = str(f'+{newKarma} Karma')
-    sub.flair.set(user[0], new_flair_text, user_css)
+    sub.flair.set(user[0], text=new_flair_text, css_class=user_css)
 
 
 def sync_flair(reddit, sub, user, user_css='green'):
-    reddit.subreddit(sub).flair.set(user[0], user[1], user_css)
+    reddit.subreddit(sub).flair.set(user[0], text=user[1], css_class=user_css)
 
 
 def sync_flair_from_db(reddit, sub, user):
-    reddit.subreddit(sub).flair.set(user[0], user[1], user[2])
+    reddit.subreddit(sub).flair.set(user[0], text=user[1], css_class=user[2])
 
 
 def already_awarded(award_comment):
