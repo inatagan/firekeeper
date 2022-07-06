@@ -10,7 +10,8 @@ def main():
         username = sys.argv[1]
         karma = int(sys.argv[2])
         plat = sys.argv[3]
-        sub = sys.argv[4]
+        option = int(sys.argv[4])
+        sub = 'SummonSign' if option < 1 else 'BeyondTheFog'
     except IndexError:
         print("Error: Missing Arguments!")
     try:
