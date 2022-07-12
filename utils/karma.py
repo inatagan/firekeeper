@@ -196,3 +196,39 @@ def can_change_flair(reddit, sub, username):
     except TypeError:
         return True
 
+
+def check_command(comment):
+    if comment.body.lower().strip().startswith(("+karma", "\\+karma")):
+        return True
+    return False
+
+
+def verify_negotiation(user_from, user_to, comment, parent_comment):
+    current_comment = comment
+    found_from = False
+    found_to = False
+    post_list = []
+    submission_author_name = "-Firekeeper-" if current_comment.submission.author is None else current_comment.submission.author.name
+    if submission_author_name == user_from.name and submission_author_name != user_to.name and not check_command(parent_comment):
+        return True #the OP can send to anyone
+    parent_comment.submission.comments.replace_more(limit=None)
+    namelist = []
+    for cmnt in parent_comment.submission.comments.list():
+        if cmnt.author is not None and cmnt.id != comment.id and cmnt.author.name == user_from.name and not check_command(cmnt):
+            namelist.append(cmnt.author.name)
+    if user_from.name in namelist:
+        post_list.append(user_from.name)
+    while not current_comment.is_root:
+        current_comment = current_comment.parent()
+        if current_comment.author is not None:
+            post_list.append(current_comment.author.name)
+    post_list.append(submission_author_name)
+    if len(post_list) > 1 and user_to and user_from and hasattr( user_to, "name") and hasattr(user_from, "name"):
+        pl = list(reversed(post_list))
+        for n in range(len(post_list)):
+            if n and pl[n] == user_from.name and pl[n - 1] == user_to.name:
+                found_to = True
+            if n and pl[n] == user_to.name and pl[n - 1] == user_from.name:
+                found_from = True
+    return (found_from and found_to)
+

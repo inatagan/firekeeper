@@ -25,7 +25,7 @@ def main():
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock()
             elif not comment.is_submitter and not comment.parent().is_submitter:
-                bot_reply = comment.reply(body=f"Foul tarnished /u/{comment.author}, My purpose was given to me by my mother. But now, I act of my own volition. I have set my heart upon the world that I would have. Regardless of my mother's designs. I won't allow anyone to speak ill of that. Not even you!  \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}.")
+                bot_reply = comment.reply(body=f"Unworthy tarnished /u/{comment.author}, I'm searching for my purpose given to me by my mother inside the Erdtree long ago, for the reason that I yet live, burned and bodyless.. I've acted the finger maiden yet I can offer no guidance, I am no maiden. My purpose was long ago lost...  \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock()
             elif comment.is_submitter and comment.parent().is_submitter:
@@ -34,6 +34,10 @@ def main():
                 bot_reply.mod.lock()
             elif comment.parent().author == '-Melina':
                 bot_reply = comment.reply(body=f"/u/{comment.author}, thank you for the +karma thou'st given. But I am merely playing the role of a maiden and not meant to have +karma. It is forbidden!! \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}.")
+                bot_reply.mod.distinguish(how="yes")
+                bot_reply.mod.lock()
+            elif not k.verify_negotiation(comment.author, comment.parent().author, comment, comment.parent()):
+                bot_reply = comment.reply(body=f"Disgraced /u/{comment.author}! Please put a stop to this madness. The Lord of Frenzied Flame is no lord at all. When the land they preside over is lifeless!! \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock()
             else:

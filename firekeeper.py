@@ -25,7 +25,7 @@ def main():
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock()
             elif not comment.is_submitter and not comment.parent().is_submitter:
-                bot_reply = comment.reply(body=f"Ashen one /u/{comment.author}, hearest thou my voice, still?!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
+                bot_reply = comment.reply(body=f"Ashen one /u/{comment.author}, the *First Flame* quickly fades. Darkness will shortly settle. But one day, tiny flames will dance across the darkness. Like embers, linked by past Lords. Ashen one hearest thou my voice, still?!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock()
             elif comment.is_submitter and comment.parent().is_submitter:
@@ -34,6 +34,10 @@ def main():
                 bot_reply.mod.lock()
             elif comment.parent().author == '-Firekeeper-':
                 bot_reply = comment.reply(body=f"/u/{comment.author}, my thanks for the +karma thou'st given. But Firekeepers are not meant to have +karma. It is forbidden!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
+                bot_reply.mod.distinguish(how="yes")
+                bot_reply.mod.lock()
+            elif not k.verify_negotiation(comment.author, comment.parent().author, comment, comment.parent()):
+                bot_reply = comment.reply(body=f"/u/{comment.author}, the fire fades and the Lords go without thrones. Surrender your fires, to the true heir. Let him grant Death.. to the old gods of Lordran, deliverers of the *First Flame*!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock()
             else:
