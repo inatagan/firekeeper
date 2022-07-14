@@ -67,6 +67,44 @@ def already_awarded(award_comment):
         return False
 
 
+def check_command(comment):
+    if comment.body.lower().strip().startswith(("+karma", "\\+karma")):
+        return True
+    return False
+
+
+def verify_negotiation(user_from, user_to, comment, parent_comment):
+    current_comment = comment
+    found_from = False
+    found_to = False
+    post_list = []
+    submission_author_name = "Totally-not-Patches" if current_comment.submission.author is None else current_comment.submission.author.name
+    if submission_author_name == user_from.name and submission_author_name != user_to.name and not check_command(parent_comment):
+        return True #the OP can send to anyone
+    parent_comment.submission.comments.replace_more(limit=None)
+    namelist = []
+    for cmnt in parent_comment.submission.comments.list():
+        if cmnt.author is not None and cmnt.id != comment.id and cmnt.author.name == user_from.name and not check_command(cmnt):
+            namelist.append(cmnt.author.name)
+    if user_from.name in namelist:
+        post_list.append(user_from.name)
+    while not current_comment.is_root:
+        current_comment = current_comment.parent()
+        if current_comment.author is not None:
+            post_list.append(current_comment.author.name)
+    post_list.append(submission_author_name)
+    if len(post_list) > 1 and user_to and user_from and hasattr( user_to, "name") and hasattr(user_from, "name"):
+        pl = list(reversed(post_list))
+        for n in range(len(post_list)):
+            if n and pl[n] == user_from.name and pl[n - 1] == user_to.name:
+                found_to = True
+            if n and pl[n] == user_to.name and pl[n - 1] == user_from.name:
+                found_from = True
+    return (found_from and found_to)
+
+
+
+
 subreddit_css_class = (
     "red",
     "mod",
@@ -93,8 +131,7 @@ reddit = praw.Reddit(
 def main():
     subreddit = reddit.subreddit("PatchesEmporium")
     for comment in subreddit.stream.comments(skip_existing=True):
-        comment.body.lower()
-        if comment.body.lower().strip().startswith(("+karma", "\\+karma")):
+        if check_command(comment):
             if comment.is_root:
                 bot_reply = comment.reply(body=f"Oi /u/{comment.author} just hold your horses a moment, you can't award +karma from a top level comment!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
@@ -113,6 +150,10 @@ def main():
                 bot_reply.mod.lock()
             elif already_awarded(comment):
                 bot_reply = comment.reply(body=f"Thought you could outwit an onion? /u/{comment.author} you have already awarded +karma to *this* user!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
+                bot_reply.mod.distinguish(how="yes")
+                bot_reply.mod.lock() 
+            elif not verify_negotiation(comment.author, comment.parent().author, comment, comment.parent()):
+                bot_reply = comment.reply(body=f"Thought you could outwit an onion? /u/{comment.author} I see no evidence that a trade has ocurred!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
                 bot_reply.mod.distinguish(how="yes")
                 bot_reply.mod.lock() 
             else:
