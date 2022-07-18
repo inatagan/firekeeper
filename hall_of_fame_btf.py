@@ -65,13 +65,13 @@ def format_table(result_list):
 def main():
     load_dotenv()
     reddit = praw.Reddit(
-        client_id=os.environ.get('schierke_client_id'),
-        client_secret=os.environ.get('schierke_client_secret'),
-        user_agent=os.environ.get('schierke_user_agent'),
-        username=os.environ.get('schierke_username'),
-        password=os.environ.get('schierke_password'),
+        client_id=os.environ.get('melina_client_id'),
+        client_secret=os.environ.get('melina_client_secret'),
+        user_agent=os.environ.get('melina_user_agent'),
+        username=os.environ.get('melina_username'),
+        password=os.environ.get('melina_password'),
     )
-    sub=os.environ.get('schierke_subreddit')
+    sub=os.environ.get('melina_subreddit')
     res_week = karma_control.get_weekly_champions()
     TABLE_WEEK = format_table(res_week)
     res_all = karma_control.get_all_time_champions()
