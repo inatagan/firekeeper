@@ -10,7 +10,7 @@ from datetime import date
 TITLE = "Beyond the fog Hall of Champions {}-{}-{}"
 
 TEXT = """### Welcome to the Hall of Champions
-Greetings, traveller from beyond the fog. Spoken echoes of Queen Marika linger here. Shall I share them with you?
+Greetings, traveler from beyond the fog. Spoken echoes of Queen Marika linger here. Shall I share them with you?
 
 >In Marika's own words. My Lord, and thy warriors. I divest each of thee of thy grace. With thine eyes dimmed, ye will be driven from the Lands Between. Ye will wage war in a land afar, where ye will live, and die.
 >
@@ -18,9 +18,17 @@ Greetings, traveller from beyond the fog. Spoken echoes of Queen Marika linger h
 >
 >Grow strong in the face of death. Warriors of my lord. Lord Godfrey.
 
+Brave tarnished we are amidst strange beings, in a strange land.
+The flow of time itself is convoluted; with heroes centuries old phasing in and out.
+
+The very fabric wavers, and relations shift and obscure.
+There's no telling how much longer your world and mine will remain in contact.
+
+But, use this and lay your golden summon sign down, to summon one another as spirits, cross the gaps between the worlds, and engage in *jolly co-operation*!
+
 This week Champions
 
--|user|karma
+-|tarnished|+karma
 :-:|:-:|:-:
 1|{}|{}
 2|{}|{}
@@ -36,7 +44,7 @@ This week Champions
 
 All time Champions
 
--|user|karma
+-|tarnished|+karma
 :-:|:-:|:-:
 1|{}|{}
 2|{}|{}
@@ -50,6 +58,8 @@ All time Champions
 10|{}|{}
 
 ---
+Congratulations to all participants
+
 [About our new karma bot](https://www.reddit.com/r/BeyondTheFog/comments/vrz3gl/traveler_from_beyond_the_fog_let_me_tell_you/)"""
 
 def main():
