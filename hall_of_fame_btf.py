@@ -82,7 +82,7 @@ def main():
     REPLY_TEXT = f"{HEADER}\n{TABLE_WEEK}\n{MIDDLE_TEXT}\n{TABLE_All}\n{FOOTER}"
 
     try:
-        sub_post = reddit.subreddit(sub).submit(title=TITLE.format(today_date.year, today_date.month, today_date.day), flair_id="b8c3da3c-9345-11ec-9a6c-ee69577ef9a6", inline_media=media,  selftext=REPLY_TEXT)
+        sub_post = reddit.subreddit(sub).submit(title=TITLE.format(today_date.year, today_date.month, today_date.day), flair_id="b8c3da3c-9345-11ec-9a6c-ee69577ef9a6", inline_media=media,  selftext=REPLY_TEXT, send_replies=False)
         sub_post.mod.distinguish(how="yes")
         sub_post.mod.sticky(state=2)
     except Exception as err:
