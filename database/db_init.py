@@ -48,7 +48,7 @@ GET_USER_KARMA = "SELECT COUNT(to_user) FROM karma WHERE to_user = ?;"
 GET_ALL_TIME_CHAMPIONS = """SELECT to_user, COUNT(to_user) FROM karma GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 10;"""
 
 
-GET_WEEKLY_CHAMPIONS = "SELECT to_user, COUNT(to_user) FROM karma WHERE date BETWEEN datetime('now', '-6 days') AND datetime('now') GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 10;"
+GET_WEEKLY_CHAMPIONS = "SELECT to_user, COUNT(to_user) FROM karma WHERE date BETWEEN datetime('now', '-6 days') AND datetime('now') GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 20;"
 
 
 DELETE_ALL_KARMA = "DELETE FROM karma WHERE to_user = ?;"
