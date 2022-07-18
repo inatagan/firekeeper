@@ -232,3 +232,14 @@ def verify_negotiation(user_from, user_to, comment, parent_comment):
                 found_from = True
     return (found_from and found_to)
 
+
+def get_all_time_champions():
+    connection = db.connect()
+    result_list = db.get_all_time_champions(connection)
+    return result_list
+
+
+def get_weekly_champions():
+    connection = db.connect()
+    result_list = db.get_weekly_champions(connection)
+    return result_list
