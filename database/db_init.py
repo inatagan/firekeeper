@@ -51,6 +51,9 @@ GET_ALL_TIME_CHAMPIONS = """SELECT to_user, COUNT(to_user) FROM karma GROUP BY t
 GET_WEEKLY_CHAMPIONS = "SELECT to_user, COUNT(to_user) FROM karma WHERE date BETWEEN datetime('now', '-6 days') AND datetime('now') GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 20;"
 
 
+GET_WEEKLY_CHAMPIONS_FROM_SUBREDDIT = "SELECT to_user, COUNT(to_user) FROM karma WHERE date BETWEEN datetime('now', '-6 days') AND datetime('now') and subreddit = ? GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 20;"
+
+
 DELETE_ALL_KARMA = "DELETE FROM karma WHERE to_user = ?;"
 
 
@@ -92,6 +95,10 @@ def get_all_time_champions(connection):
 def get_weekly_champions(connection):
     with connection:
         return connection.execute(GET_WEEKLY_CHAMPIONS).fetchall()
+
+def get_weekly_champions_from_subreddit(connection, subreddit):
+    with connection:
+        return connection.execute(GET_WEEKLY_CHAMPIONS, (subreddit,)).fetchall()
 
 
 def delete_all(connection, username):

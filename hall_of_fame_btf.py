@@ -43,7 +43,7 @@ MIDDLE_TEXT = """
 
 
 FOOTER = """
-Congratulations to all participants of /r/SummonSign and /r/BeyondThefog, if you would like to join the *Hall of CHampions* lay down your golden sign, slay every boss, earn your +karma and rise to the ranks.
+Congratulations to all participants of /r/SummonSign and /r/BeyondThefog, if you would like to join the *Hall of Champions* lay down your golden sign, slay every boss, earn your +karma and rise to the ranks.
 
 ---
 *Art by @[Yuchan](https://www.pixiv.net/en/artworks/97271504)

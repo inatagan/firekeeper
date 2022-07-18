@@ -243,3 +243,9 @@ def get_weekly_champions():
     connection = db.connect()
     result_list = db.get_weekly_champions(connection)
     return result_list
+
+
+def get_weekly_champions_from_subreddit(subreddit):
+    connection = db.connect()
+    result_list = db.get_weekly_champions_from_subreddit(connection, subreddit)
+    return result_list
