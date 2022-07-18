@@ -12,11 +12,11 @@ TITLE = "Beyond the fog Hall of Champions {}-{}-{}"
 TEXT = """### Welcome to the Hall of Champions
 Greetings, traveller from beyond the fog. Spoken echoes of Queen Marika linger here. Shall I share them with you?
 
-    In Marika's own words. My Lord, and thy warriors. I divest each of thee of thy grace. With thine eyes dimmed, ye will be driven from the Lands Between. Ye will wage war in a land afar, where ye will live, and die.
-
-    Then, after thy death, I will give back what I once claimed. Return to the Lands Between, wage war, and brandish the Elden Ring.
-
-    Grow strong in the face of death. Warriors of my lord. Lord Godfrey.
+>In Marika's own words. My Lord, and thy warriors. I divest each of thee of thy grace. With thine eyes dimmed, ye will be driven from the Lands Between. Ye will wage war in a land afar, where ye will live, and die.
+>
+>Then, after thy death, I will give back what I once claimed. Return to the Lands Between, wage war, and brandish the Elden Ring.
+>
+>Grow strong in the face of death. Warriors of my lord. Lord Godfrey.
 
 This week Champions
 
