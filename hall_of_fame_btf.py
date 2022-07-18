@@ -3,13 +3,16 @@ import os
 import praw
 from utils import karma as karma_control
 from datetime import date
+from praw.models import InlineImage
 
 
 
+image = InlineImage(path="assets/banner.jpg", caption="1")
 
 TITLE = "Beyond the fog Hall of Champions {}-{}-{}"
 
-HEADER = """### Welcome to the Hall of Champions
+HEADER = """### Welcome to the Hall of Champions {image1}
+
 Greetings, traveler from beyond the fog. Spoken echoes of Queen Marika linger here. Shall I share them with you?
 
 >In Marika's own words. My Lord, and thy warriors. I divest each of thee of thy grace. With thine eyes dimmed, ye will be driven from the Lands Between. Ye will wage war in a land afar, where ye will live, and die.
@@ -40,6 +43,8 @@ Congratulations to all participants
 
 [About our new karma bot](https://www.reddit.com/r/BeyondTheFog/comments/vrz3gl/traveler_from_beyond_the_fog_let_me_tell_you/)"""
 
+media = {"image1": image}
+
 
 def format_table(result_list):
     columns = len(result_list[0]) + 1
@@ -67,10 +72,13 @@ def main():
     today_date = date.today()
     REPLY_TEXT = f"{HEADER}\n{TABLE_WEEK}\n{MIDDLE_TEXT}\n{TABLE_All}\n{FOOTER}"
 
-    sub_post = reddit.subreddit(sub).submit(title=TITLE.format(today_date.year, today_date.month, today_date.day),  selftext=REPLY_TEXT)
-    sub_post.mod.distinguish(how="yes")
-    sub_post.mod.sticky(state=2)
-
+    try:
+        sub_post = reddit.subreddit(sub).submit(title=TITLE.format(today_date.year, today_date.month, today_date.day), inline_media=media,  selftext=REPLY_TEXT)
+        sub_post.mod.distinguish(how="yes")
+        sub_post.mod.sticky(state=2)
+    except Exception as err:
+        print(err)
+    
 
 if __name__ == '__main__':
     main()
