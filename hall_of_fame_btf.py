@@ -72,7 +72,7 @@ def main():
         password=os.environ.get('melina_password'),
     )
     sub=os.environ.get('melina_subreddit')
-    res_week = karma_control.get_weekly_champions()
+    res_week = karma_control.get_weekly_champions_from_subreddit(sub)
     TABLE_WEEK = format_table(res_week)
     res_all = karma_control.get_all_time_champions()
     TABLE_All = format_table(res_all)

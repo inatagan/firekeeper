@@ -63,13 +63,13 @@ def format_table(result_list):
 def main():
     load_dotenv()
     reddit = praw.Reddit(
-        client_id=os.environ.get('schierke_client_id'),
-        client_secret=os.environ.get('schierke_client_secret'),
-        user_agent=os.environ.get('schierke_user_agent'),
-        username=os.environ.get('schierke_username'),
-        password=os.environ.get('schierke_password'),
+        client_id=os.environ.get('my_client_id'),
+        client_secret=os.environ.get('my_client_secret'),
+        user_agent=os.environ.get('my_user_agent'),
+        username=os.environ.get('my_username'),
+        password=os.environ.get('my_password'),
     )
-    sub=os.environ.get('schierke_subreddit')
+    sub=os.environ.get('my_subreddit')
     res_week = karma_control.get_weekly_champions_from_subreddit(sub)
     TABLE_WEEK = format_table(res_week)
     res_all = karma_control.get_all_time_champions()
@@ -80,8 +80,7 @@ def main():
     REPLY_TEXT = f"{HEADER}\n{TABLE_WEEK}\n{MIDDLE_TEXT}\n{TABLE_All}\n{FOOTER}"
 
     try:
-        # sub_post = reddit.subreddit(sub).submit(title=TITLE.format(today_date.year, today_date.month, today_date.day), flair_id="b8c3da3c-9345-11ec-9a6c-ee69577ef9a6", inline_media=media,  selftext=REPLY_TEXT, send_replies=False)
-        sub_post = reddit.subreddit(sub).submit(title=TITLE.format(today_date.year, today_date.month, today_date.day), inline_media=media,  selftext=REPLY_TEXT, send_replies=False)
+        sub_post = reddit.subreddit(sub).submit(title=TITLE.format(today_date.year, today_date.month, today_date.day), flair_id="b847e3d0-5469-11eb-adff-0e82fa5aa449", inline_media=media,  selftext=REPLY_TEXT, send_replies=False)
         sub_post.mod.distinguish(how="yes")
         sub_post.mod.sticky(state=2)
     except Exception as err:
