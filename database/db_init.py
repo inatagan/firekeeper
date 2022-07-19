@@ -98,7 +98,7 @@ def get_weekly_champions(connection):
 
 def get_weekly_champions_from_subreddit(connection, subreddit):
     with connection:
-        return connection.execute(GET_WEEKLY_CHAMPIONS, (subreddit,)).fetchall()
+        return connection.execute(GET_WEEKLY_CHAMPIONS_FROM_SUBREDDIT, (subreddit,)).fetchall()
 
 
 def delete_all(connection, username):
