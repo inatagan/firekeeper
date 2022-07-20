@@ -82,7 +82,7 @@ def main():
     try:
         sub_post = reddit.subreddit(sub).submit(title=TITLE.format(today_date.year, today_date.month, today_date.day), flair_id="b847e3d0-5469-11eb-adff-0e82fa5aa449", inline_media=media,  selftext=REPLY_TEXT, send_replies=False)
         sub_post.mod.distinguish(how="yes")
-        sub_post.mod.sticky(state=2)
+        sub_post.mod.sticky(state=True)
         sub_post.mod.suggested_sort(sort="confidence")
     except Exception as err:
         print(err)
