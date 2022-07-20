@@ -31,8 +31,9 @@ SYNC_KARMA_PLAT = """INSERT INTO karma (
             from_user,
             to_user,
             platform,
-            subreddit)
-            VALUES (?, ?, ?, ?);"""
+            subreddit,
+            date)
+            VALUES (?, ?, ?, ?, ?);"""
 
 
 SYNC_KARMA = """INSERT INTO karma (
@@ -77,9 +78,9 @@ def sync_karma(connection, from_user, to_user, subreddit):
         connection.execute(SYNC_KARMA, (from_user, to_user, subreddit))
 
 
-def sync_karma_plat(connection, from_user, to_user, platform, subreddit):
+def sync_karma_plat(connection, from_user, to_user, platform, subreddit, date='1970-01-01 00:00:00'):
     with connection:
-        connection.execute(SYNC_KARMA_PLAT, (from_user, to_user, platform, subreddit))
+        connection.execute(SYNC_KARMA_PLAT, (from_user, to_user, platform, subreddit, date))
 
 
 def get_user_karma(connection, username):
