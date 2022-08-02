@@ -1,7 +1,8 @@
 import re
-from prawcore.exceptions import NotFound
 from database import db_init as db
 from sqlite3 import IntegrityError
+from prawcore.exceptions import NotFound
+import praw.exceptions
 
 
 #Tuple containing subreddit valid css_class
@@ -250,3 +251,20 @@ def get_weekly_champions_from_subreddit(subreddit):
     result_list = db.get_weekly_champions_from_subreddit(connection, subreddit)
     return result_list
 
+
+def moderator_safe_reply(logger, comment, message):
+    permalink = comment.permalink
+    try:
+        bot_reply = comment.reply(body=message)
+        logger.debug('REPLY SUCCES: {}'.format(permalink))
+    except praw.exceptions.RedditAPIException as exc:
+        # if exc.error_type != 'TOO_OLD':
+        #     raise
+        # logger.exception('REPLY FAIL: {} {}'.format(exc.error_type, permalink))
+        logger.exception('REPLY FAIL: {}'.format(permalink))
+        return False
+    else:
+        bot_reply.mod.distinguish(how="yes")
+        bot_reply.mod.lock()
+    logger.debug('REPLIED TO: {}'.format(permalink))
+    return True
