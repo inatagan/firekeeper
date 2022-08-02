@@ -11,7 +11,9 @@ Restart=on-failure
 RestartSec=5s
 Type=idle
 ExecStart=/usr/bin/python /home/$USER/firekeeper/simple_flair_bot/patches_bot.py
-User=pi
+User=$USER  
+KillSignal=SIGINT  
+
 
 [Install]
 WantedBy=multi-user.target

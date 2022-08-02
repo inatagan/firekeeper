@@ -13,6 +13,8 @@ Type=idle
 WorkingDirectory= /home/$USER/firekeeper/  
 ExecStart=/usr/bin/python /home/$USER/firekeeper/melina.py  
 User=$USER  
+KillSignal=SIGINT  
+
 
 [Install]  
 WantedBy=multi-user.target

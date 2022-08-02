@@ -256,11 +256,8 @@ def moderator_safe_reply(logger, comment, message):
     permalink = comment.permalink
     try:
         bot_reply = comment.reply(body=message)
-        logger.debug('REPLY SUCCES: {}'.format(permalink))
-    except praw.exceptions.RedditAPIException as exc:
-        # if exc.error_type != 'TOO_OLD':
-        #     raise
-        # logger.exception('REPLY FAIL: {} {}'.format(exc.error_type, permalink))
+        logger.debug('REPLY SUCCESS: {}'.format(permalink))
+    except praw.exceptions.RedditAPIException:
         logger.exception('REPLY FAIL: {}'.format(permalink))
         return False
     else:

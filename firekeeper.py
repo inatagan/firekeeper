@@ -30,9 +30,9 @@ def main():
         username=os.environ.get('my_username'),
         password=os.environ.get('my_password'),
     )
-
     my_sub = os.environ.get('my_subreddit')
     subreddit = reddit.subreddit(my_sub)
+
 
     running = True
     while running:
@@ -76,7 +76,7 @@ def main():
                                 post = comment.submission
                                 try:
                                     post.mod.flair(text=":sunbro: Duty Fulfilled!", css_class="duty-fulfilled", flair_template_id="25213842-1029-11e6-ba76-0ecc83f85b2b")
-                                except Exception:
+                                except:
                                     logger.exception('FAILED TO CLOSE SUBMISSION {}'.format(comment.submission.permalink))
         except KeyboardInterrupt:
             logger.info('Termination received. Goodbye!')
