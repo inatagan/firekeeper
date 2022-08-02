@@ -1,7 +1,18 @@
 from dotenv import load_dotenv
+from prawcore.exceptions import PrawcoreException
 import os
 import praw
 import re
+import logging
+import time
+
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s [ %(levelname)s ] | [ %(name)s ]: %(message)s')
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+logger.addHandler(stream_handler)
 
 
 
@@ -103,6 +114,19 @@ def verify_negotiation(user_from, user_to, comment, parent_comment):
     return (found_from and found_to)
 
 
+def moderator_safe_reply(comment, message):
+    permalink = comment.permalink
+    try:
+        bot_reply = comment.reply(body=message)
+    except praw.exceptions.RedditAPIException:
+        logger.exception('REPLY FAIL: {}'.format(permalink))
+        return False
+    else:
+        bot_reply.mod.distinguish(how="yes")
+        bot_reply.mod.lock()
+    return True
+
+
 
 
 subreddit_css_class = (
@@ -118,64 +142,72 @@ subreddit_css_class = (
 )
 
 
-load_dotenv()
-reddit = praw.Reddit(
-    client_id=os.environ.get('patches_client_id'),
-    client_secret=os.environ.get('patches_client_secret'),
-    user_agent=os.environ.get('patches_user_agent'),
-    username=os.environ.get('patches_username'),
-    password=os.environ.get('patches_password'),
-)
 
 
 def main():
-    subreddit = reddit.subreddit("PatchesEmporium")
-    for comment in subreddit.stream.comments(skip_existing=True):
-        if check_command(comment):
-            if comment.is_root:
-                bot_reply = comment.reply(body=f"Oi /u/{comment.author} just hold your horses a moment, you can't award +karma from a top level comment!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
-                bot_reply.mod.distinguish(how="yes")
-                bot_reply.mod.lock()
-            elif not comment.is_submitter and not comment.parent().is_submitter:
-                bot_reply = comment.reply(body=f"Stingy little beggar /u/{comment.author}, you can't do that. Try to find it in your heart next time, eh?!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
-                bot_reply.mod.distinguish(how="yes")
-                bot_reply.mod.lock()
-            elif comment.is_submitter and comment.parent().is_submitter:
-                bot_reply = comment.reply(body=f"Shame on you, you insatiable wench /u/{comment.author}, you can't award +karma to yourself greedy guts!!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
-                bot_reply.mod.distinguish(how="yes")
-                bot_reply.mod.lock()
-            elif comment.parent().author == 'Totally-not-Patches':
-                bot_reply = comment.reply(body=f"Sorry /u/{comment.author} are you a cleric or something? And you are trying to award +karma to the wrong user!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
-                bot_reply.mod.distinguish(how="yes")
-                bot_reply.mod.lock()
-            elif already_awarded(comment):
-                bot_reply = comment.reply(body=f"Thought you could outwit an onion? /u/{comment.author} you have already awarded +karma to *this* user!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
-                bot_reply.mod.distinguish(how="yes")
-                bot_reply.mod.lock() 
-            elif not verify_negotiation(comment.author, comment.parent().author, comment, comment.parent()):
-                bot_reply = comment.reply(body=f"Thought you could outwit an onion? /u/{comment.author} I see no evidence that a trade has ocurred!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
-                bot_reply.mod.distinguish(how="yes")
-                bot_reply.mod.lock() 
-            else:
-                try:
-                    user = get_comment_flair(comment.parent())
-                    if user[2] is not None:
-                        karma = get_karma_count(user)
-                        user_css = get_css_class(karma)
-                        set_flair(subreddit, user, karma, user_css)
+    load_dotenv()
+    reddit = praw.Reddit(
+        client_id=os.environ.get('patches_client_id'),
+        client_secret=os.environ.get('patches_client_secret'),
+        user_agent=os.environ.get('patches_user_agent'),
+        username=os.environ.get('patches_username'),
+        password=os.environ.get('patches_password'),
+    )
+    my_sub = os.environ.get('patches_subreddit')
+    subreddit = reddit.subreddit(my_sub)
+
+    running = True
+    while running:
+        try:
+            for comment in subreddit.stream.comments(skip_existing=True):
+                if check_command(comment):
+                    if comment.is_root:
+                        ERROR_TOP_LEVEL=f"Oi /u/{comment.author} just hold your horses a moment, you can't award +karma from a top level comment!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
+                        moderator_safe_reply(comment, ERROR_TOP_LEVEL)
+                    elif not comment.is_submitter and not comment.parent().is_submitter:
+                        ERROR_USER_DENIED=f"Stingy little beggar /u/{comment.author}, you can't do that. Try to find it in your heart next time, eh?!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
+                        moderator_safe_reply(comment, ERROR_USER_DENIED)
+                    elif comment.is_submitter and comment.parent().is_submitter:
+                        ERROR_GREEDY_USER=f"Shame on you, you insatiable wench /u/{comment.author}, you can't award +karma to yourself greedy guts!!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
+                        moderator_safe_reply(comment, ERROR_GREEDY_USER)
+                    elif comment.parent().author == 'Totally-not-Patches':
+                        ERROR_FORBIDDEN_USER=f"Sorry /u/{comment.author} are you a cleric or something? And you are trying to award +karma to the wrong user!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
+                        moderator_safe_reply(comment, ERROR_FORBIDDEN_USER)
+                    elif already_awarded(comment):
+                        ERROR_ALREADY_AWARDED=f"Thought you could outwit an onion? /u/{comment.author} you have already awarded +karma to *this* user!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
+                        moderator_safe_reply(comment, ERROR_ALREADY_AWARDED)
+                    elif not verify_negotiation(comment.author, comment.parent().author, comment, comment.parent()):
+                        ERROR_NEGOTIATION_FAIL=f"Thought you could outwit an onion? /u/{comment.author} I see no evidence that a trade has ocurred!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
+                        moderator_safe_reply(comment, ERROR_NEGOTIATION_FAIL)
                     else:
-                        set_flair(subreddit, user, 0)
-                except:
-                    bot_reply = comment.reply(body=f"Shame on you, you rotten cleric /u/{comment.author} something went wrong! But I'll forgive you. View it as a learning experience. At any rate, it's nice just to see you safe!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
-                    bot_reply.mod.distinguish(how="yes")
-                    bot_reply.mod.lock()
-                else:
-                    bot_reply = comment.reply(body=f"Cheers for that! /u/{comment.author} you have awarded +karma to user /u/{comment.parent().author.name}!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}.")
-                    bot_reply.mod.distinguish(how="yes")
-                    bot_reply.mod.lock()
-                    if 'close' in comment.body.lower() and comment.is_submitter:
-                        post = comment.submission
-                        post.mod.flair(text="Complete!", css_class="duty-fulfilled", flair_template_id="a9bcc130-9a8d-11ec-820c-aa2f5c846ca8")
+                        try:
+                            user = get_comment_flair(comment.parent())
+                            if user[2] is not None:
+                                karma = get_karma_count(user)
+                                user_css = get_css_class(karma)
+                                set_flair(subreddit, user, karma, user_css)
+                            else:
+                                set_flair(subreddit, user, 0)
+                        except:
+                            ERROR_UNKNOWN=f"Shame on you, you rotten cleric /u/{comment.author} something went wrong! But I'll forgive you. View it as a learning experience. At any rate, it's nice just to see you safe!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
+                            moderator_safe_reply(comment, ERROR_UNKNOWN)
+                        else:
+                            SUCCESS_REPLY=f"Cheers for that! /u/{comment.author} you have awarded +karma to user /u/{comment.parent().author.name}!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
+                            moderator_safe_reply(comment, SUCCESS_REPLY)
+                            if 'close' in comment.body.lower() and comment.is_submitter:
+                                post = comment.submission
+                                try:
+                                    post.mod.flair(text="Complete!", css_class="duty-fulfilled", flair_template_id="a9bcc130-9a8d-11ec-820c-aa2f5c846ca8")
+                                except PrawcoreException:
+                                    logger.exception('FAILED TO CLOSE SUBMISSION {}'.format(comment.submission.permalink))
+        except KeyboardInterrupt:
+            logger.info('Termination received. Goodbye!')
+            running = False
+        except PrawcoreException:
+            logger.exception('Oops I did it again.. comment? {}'.format(comment.permalink))
+            time.sleep(10)
+
+
 
 
 if __name__ == '__main__':
