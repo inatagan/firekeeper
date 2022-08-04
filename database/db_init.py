@@ -58,6 +58,9 @@ GET_WEEKLY_CHAMPIONS_FROM_SUBREDDIT = "SELECT to_user, COUNT(to_user) FROM karma
 DELETE_ALL_KARMA = "DELETE FROM karma WHERE to_user = ?;"
 
 
+DELETE_KARMA_COMMENT_ID = "DELETE FROM karma WHERE comment_id = ?"
+
+
 # Functions
 def connect():
     return sqlite3.connect('summonsign.db')
@@ -105,4 +108,9 @@ def get_weekly_champions_from_subreddit(connection, subreddit):
 def delete_all(connection, username):
     with connection:
         connection.execute(DELETE_ALL_KARMA, (username,))
+
+
+def delete_by_comment_id(connection, comment_id):
+    with connection:
+        connection.execute(DELETE_KARMA_COMMENT_ID, (comment_id,))
 
