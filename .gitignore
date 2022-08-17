@@ -134,3 +134,4 @@ dmypy.json
 
 #Test build
 schierke.py
+btf_patch_notes_1_06.py

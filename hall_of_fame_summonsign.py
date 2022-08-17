@@ -44,7 +44,7 @@ FOOTER = """
 Congratulations to all participants of /r/SummonSign and /r/BeyondThefog, if you would like to join the *Hall of Champions* lay down your golden sign, slay every soul, earn your +karma and rise to the ranks.
 
 ---
-*Art by @[とげ](https://www.pixiv.net/en/artworks/97939150)
+*Art by @[S-Mrry](https://www.pixiv.net/en/artworks/92892358)
 
 Farewell chosen undead, should your heart bend [contact the moderators](https://reddit.com/message/compose?to=/r/SummonSign&subject=About%20the%20Hall%20od%20Champions&message=)
 
@@ -75,7 +75,7 @@ def main():
     res_all = karma_control.get_all_time_champions()
     TABLE_All = format_table(res_all)
     today_date = date.today()
-    image = InlineImage(path="assets/banner_1.jpg", caption="The fire fades...")
+    image = InlineImage(path="assets/hof_summonsign_banner.png", caption="The fire fades... plim, plim.. plom")
     media = {"image1": image}
     REPLY_TEXT = f"{HEADER}\n{TABLE_WEEK}\n{MIDDLE_TEXT}\n{TABLE_All}\n{FOOTER}"
 
