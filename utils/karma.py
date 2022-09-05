@@ -252,6 +252,12 @@ def get_weekly_champions_from_subreddit(subreddit):
     return result_list
 
 
+def get_all_time_champions_from_subreddit(subreddit):
+    connection = db.connect()
+    result_list = db.get_all_time_champions_from_subreddit(connection, subreddit)
+    return result_list
+
+
 def moderator_safe_reply(logger, comment, message):
     permalink = comment.permalink
     try:

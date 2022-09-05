@@ -72,10 +72,10 @@ def main():
     sub=os.environ.get('my_subreddit')
     res_week = karma_control.get_weekly_champions_from_subreddit(sub)
     TABLE_WEEK = format_table(res_week)
-    res_all = karma_control.get_all_time_champions()
+    res_all = karma_control.get_all_time_champions_from_subreddit(sub)
     TABLE_All = format_table(res_all)
     today_date = date.today()
-    image = InlineImage(path="assets/hof_summonsign_banner.png", caption="The fire fades... plim, plim.. plom")
+    image = InlineImage(path="assets/hof_summonsign_banner.png", caption="The fire fades... plin, plin.. plon")
     media = {"image1": image}
     REPLY_TEXT = f"{HEADER}\n{TABLE_WEEK}\n{MIDDLE_TEXT}\n{TABLE_All}\n{FOOTER}"
 
