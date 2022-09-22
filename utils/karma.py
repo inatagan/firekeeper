@@ -3,6 +3,7 @@ from database import db_init as db
 from sqlite3 import IntegrityError
 from prawcore.exceptions import NotFound
 import praw.exceptions
+import flairsync
 
 
 #Tuple containing subreddit valid css_class
@@ -271,3 +272,19 @@ def moderator_safe_reply(logger, comment, message):
         bot_reply.mod.lock()
     logger.debug('REPLIED TO: {}'.format(permalink))
     return True
+
+
+def submission_clear(submission, my_username, logger):
+    connection = db.connect()
+    # submission = award_comment.submission
+    submission.comments.replace_more(limit=None)
+    for comment in submission.comments.list():
+        if comment.author == my_username:
+            comment_karma = comment.parent()
+            try:
+                db.delete_by_comment_id(connection, comment_karma.id)
+            except Exception:
+                logger.exception('DELETION FAIL: {}'.format(comment.permalink))
+            else:
+                flairsync.main(comment_karma.parent().author)
+                comment.delete()
