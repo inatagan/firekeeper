@@ -181,6 +181,28 @@ def add_karma_to_db(
         raise
 
 
+def add_non_participant_to_db(username, subreddit):
+    connection = db.connect()
+    db.create_tables(connection)
+    try:
+        db.add_non_participant(connection, username, subreddit)
+    except IntegrityError:
+        raise
+    except Exception:
+        raise
+
+
+def remove_non_participant_to_db(username, subreddit):
+    connection = db.connect()
+    db.create_tables(connection)
+    try:
+        db.remove_from_non_participant(connection, username, subreddit)
+    except IntegrityError:
+        raise
+    except Exception:
+        raise
+
+
 def delete_all_userflair(reddit, sub):
     subreddit = reddit.subreddit(sub)
     deleted = subreddit.flair.delete_all()
@@ -237,25 +259,57 @@ def verify_negotiation(user_from, user_to, comment, parent_comment):
 
 def get_all_time_champions():
     connection = db.connect()
+    db.create_tables(connection)
     result_list = db.get_all_time_champions(connection)
+    return result_list
+
+
+def get_all_time_champions_by_plat(platform):
+    connection = db.connect()
+    db.create_tables(connection)
+    result_list = db.get_all_time_champions_by_plat(connection, platform)
     return result_list
 
 
 def get_weekly_champions():
     connection = db.connect()
+    db.create_tables(connection)
     result_list = db.get_weekly_champions(connection)
+    return result_list
+
+
+def get_weekly_champions_by_plat(platform):
+    connection = db.connect()
+    db.create_tables(connection)
+    result_list = db.get_weekly_champions_by_plat(connection, platform)
     return result_list
 
 
 def get_weekly_champions_from_subreddit(subreddit):
     connection = db.connect()
+    db.create_tables(connection)
     result_list = db.get_weekly_champions_from_subreddit(connection, subreddit)
+    return result_list
+
+
+def get_weekly_champions_from_subreddit_by_plat(subreddit, platform):
+    connection = db.connect()
+    db.create_tables(connection)
+    result_list = db.get_weekly_champions_from_subreddit_by_plat(connection, subreddit, platform)
     return result_list
 
 
 def get_all_time_champions_from_subreddit(subreddit):
     connection = db.connect()
+    db.create_tables(connection)
     result_list = db.get_all_time_champions_from_subreddit(connection, subreddit)
+    return result_list
+
+
+def get_all_time_champions_from_subreddit_by_plat(subreddit, platform):
+    connection = db.connect()
+    db.create_tables(connection)
+    result_list = db.get_all_time_champions_from_subreddit_by_plat(connection, subreddit, platform)
     return result_list
 
 

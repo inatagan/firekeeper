@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from sqlite3 import IntegrityError
 from utils import karma as k
 from prawcore.exceptions import PrawcoreException
+from praw.models import Message
 
 
 
@@ -38,6 +39,7 @@ def main():
     comment_stream = subreddit.stream.comments(pause_after=-1, skip_existing=True)
     mod_log_stream = subreddit.mod.stream.log(pause_after=-1, skip_existing=True)
     modmail_stream = subreddit.mod.stream.modmail_conversations(pause_after=-1, skip_existing=True)
+    inbox_stream = reddit.inbox.stream(pause_after=-1, skip_existing=True)
 
 
     running = True
@@ -100,6 +102,10 @@ def main():
                         k.submission_clear(submission, my_username, logger)
                 if log.action == "banuser" and log.details == "permanent":
                     try:
+                        k.add_non_participant_to_db(log.target_author, subreddit.display_name)
+                    except:
+                        logger.exception('FAIL TO ADD TO DB_NON_PARTICIPANT: {}'.format(log.target_author))
+                    try:
                         subreddit.flair.set(log.target_author, text="quarantined", css_class="red")
                     except:
                         logger.exception('FAIL TO SET USERFLAIR: {}'.format(log.target_author))
@@ -112,11 +118,28 @@ def main():
                     conversation = subreddit.modmail(modmail.id, mark_read=True)
                     for message in conversation.messages:
                         if "shabriri grape" in message.body_markdown.lower():
-                            # print(message.body_markdown)
                             try:
-                                modmail.reply(body=f"Disgraced /u/{message.author}! Please put a stop to this madness. The Lord of Frenzied Flame is no lord at all. When the land they preside over is lifeless!!", author_hidden=False)
+                                modmail.reply(body=f"Disgraced /u/{message.author}! *You...* have inherited the Frenzied Flame. A pity. You are no longer fit. Our journey together ends here. And remember... Should you rise as the Lord of Chaos, I will kill you, as sure as night follows day. Such is my duty, for allowing you the strength of runes. Goodbye, my companion. Goodbye, Torrent... I will seek you, as far as you may travel... To deliver you what is yours. **Destined Death**.", author_hidden=False)
                             except:
                                 logger.exception('FAIL TO REPLY MODMAIL: {}'.format(modmail.id))
+
+
+            for item in inbox_stream:
+                if item is None:
+                    break
+                if isinstance(item, Message):
+                    if 'add non participant' in item.subject:
+                        username = item.body
+                        try:
+                            k.add_non_participant_to_db(username, subreddit.display_name)
+                        except IntegrityError:
+                            item.reply(body=f"FAIL: u/{username} already is non participant")
+                        except:
+                            item.reply(body=f"FAIL: u/{username} SOMETHING WENT WRONG!!")
+                            logger.exception('FAIL TO ADD NON PARTIPANT: {}'.format(username))
+                        else:
+                            item.reply(body=f"SUCCESS: u/{username} added to non partipant")
+
 
 
         except KeyboardInterrupt:
