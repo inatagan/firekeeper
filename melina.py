@@ -23,20 +23,28 @@ logger.addHandler(log_file_handler)
 def main():
     load_dotenv()
     reddit = praw.Reddit(
-        client_id=os.environ.get('melina_client_id'),
-        client_secret=os.environ.get('melina_client_secret'),
-        user_agent=os.environ.get('melina_user_agent'),
-        username=os.environ.get('melina_username'),
-        password=os.environ.get('melina_password'),
+        client_id=os.environ.get('schierke_client_id'),
+        client_secret=os.environ.get('schierke_client_secret'),
+        user_agent=os.environ.get('schierke_user_agent'),
+        username=os.environ.get('schierke_username'),
+        password=os.environ.get('schierke_password'),
     )
-    my_sub = os.environ.get('melina_subreddit')
+    my_sub = os.environ.get('schierke_subreddit')
+    my_username = os.environ.get('schierke_username')
     subreddit = reddit.subreddit(my_sub)
+
+
+    #multiple streams
+    comment_stream = subreddit.stream.comments(pause_after=-1, skip_existing=True)
+    mod_log_stream = subreddit.mod.stream.log(pause_after=-1, skip_existing=True)
 
 
     running = True
     while running:
         try:
-            for comment in subreddit.stream.comments(skip_existing=True):
+            for comment in comment_stream:
+                if comment is None:
+                    break
                 if comment.body.lower().strip().startswith(("+karma", "\\+karma")):
                     if comment.is_root:
                         ERROR_TOP_LEVEL=f"Foul tarnished /u/{comment.author}, thee can't award +karma from a top level comment!! \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
@@ -77,6 +85,25 @@ def main():
                                     post.mod.flair(text=":sunbro: Duty Fulfilled!", css_class="duty-fulfilled", flair_template_id="186b0ec2-9343-11ec-b414-cefd332e8238")
                                 except:
                                     logger.exception('FAILED TO CLOSE SUBMISSION {}'.format(comment.submission.permalink))
+            
+            
+            for log in mod_log_stream:
+                if log is None:
+                    break
+                if log.action == "removelink":
+                    try:
+                        submission = reddit.submission(url=f"https://www.reddit.com{log.target_permalink}")
+                    except:
+                        logger.exception('FAIL TO RETRIEVE PERMALINK: {}'.format(log.target_permalink))
+                    else:
+                        k.submission_clear(submission, my_username, logger)
+                if log.action == "banuser" and log.details == "permanent":
+                    try:
+                        subreddit.flair.set(log.target_author, text="quarantined", css_class="red")
+                    except:
+                        logger.exception('FAIL TO SET USERFLAIR: {}'.format(log.target_author))
+
+
         except KeyboardInterrupt:
             logger.info('Termination received. Goodbye!')
             running = False
