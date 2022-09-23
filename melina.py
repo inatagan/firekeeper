@@ -37,6 +37,7 @@ def main():
     #multiple streams
     comment_stream = subreddit.stream.comments(pause_after=-1, skip_existing=True)
     mod_log_stream = subreddit.mod.stream.log(pause_after=-1, skip_existing=True)
+    modmail_stream = subreddit.mod.stream.modmail_conversations(pause_after=-1, skip_existing=True)
 
 
     running = True
@@ -73,10 +74,10 @@ def main():
                             k.moderator_safe_reply(logger, comment, ERROR_UNKNOWN)
                             logger.exception('THIS CANNOT CONTINUE.. {}'.format(comment.permalink))
                         else:
-                            try:
-                                flairsync.main(comment.parent().author.name)
-                            except Exception:
-                                logger.exception('FLAIRSYNC FAILED {}'.format(comment.permalink))
+                            # try:
+                            #     flairsync.main(comment.parent().author.name)
+                            # except Exception:
+                            #     logger.exception('FLAIRSYNC FAILED {}'.format(comment.permalink))
                             SUCCESS_REPLY=f"Tarnished guided by grace /u/{comment.author}, in the name of Queen Marika the Eternal I shall grant +karma to user /u/{comment.parent().author.name}!  \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
                             k.moderator_safe_reply(logger, comment, SUCCESS_REPLY)
                             if 'close' in comment.body.lower() and comment.is_submitter:
@@ -102,6 +103,20 @@ def main():
                         subreddit.flair.set(log.target_author, text="quarantined", css_class="red")
                     except:
                         logger.exception('FAIL TO SET USERFLAIR: {}'.format(log.target_author))
+            
+
+            for modmail in modmail_stream:
+                if modmail is None:
+                    break
+                if "about the false maiden" in modmail.subject.lower() or "about+the+false+maiden" in modmail.subject.lower():
+                    conversation = subreddit.modmail(modmail.id, mark_read=True)
+                    for message in conversation.messages:
+                        if "shabriri grape" in message.body_markdown.lower():
+                            # print(message.body_markdown)
+                            try:
+                                modmail.reply(body=f"Disgraced /u/{message.author}! Please put a stop to this madness. The Lord of Frenzied Flame is no lord at all. When the land they preside over is lifeless!!", author_hidden=False)
+                            except:
+                                logger.exception('FAIL TO REPLY MODMAIL: {}'.format(modmail.id))
 
 
         except KeyboardInterrupt:
