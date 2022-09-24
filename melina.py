@@ -156,6 +156,7 @@ def main():
                             logger.exception('FAIL TO RETRIEVE PERMALINK: {}'.format(log.target_permalink))
                         else:
                             k.submission_clear(submission, my_username, logger)
+                            item.reply(body=f"SUCCESS: submission cleaned: {submission}")
                     if 'sync karma' in item.subject:
                         info = []
                         for data in item.body.split(","):
@@ -164,18 +165,26 @@ def main():
                             k.sync_karma_to_db(username=info[0],karma=info[1], platform=info[2], subreddit=subreddit.display_name)
                         except:
                             logger.exception('FAIL TO SYNC USER_KARMA: {}'.format(info))
+                        else:
+                            item.reply(body=f"SUCCESS: u/{info[0]} flair updated!!")
+                            subreddit.modmail.create(subject="karma exchange", body="karma exchange complete.\n\n---", recipient=info[0])
                     if 'delete all karma' in item.subject:
                         username = item.body
                         try:
                             k.delete_all_karma_from_user(username)
                         except:
                             logger.exception('FAIL TO DELETE USER_KARMA: {}'.format(username))
+                        else:
+                            item.reply(body=f"SUCCESS: u/{item.body} karma deleted!!")
                     if 'delete karma by comment' in item.subject:
                         comment_id = item.body
                         try:
                             k.delete_karma_by_comment_id(comment_id, my_username, reddit)
                         except:
                             logger.exception('FAIL TO DELETE COMMENT_KARMA: {}'.format(comment_id))
+                        else:
+                            comment = reddit.comment(comment_id)
+                            item.reply(body=f"SUCCESS: karma deleted: \n\n{comment.permalink}")
 
 
 
