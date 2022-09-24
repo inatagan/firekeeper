@@ -162,7 +162,7 @@ def main():
                         for data in item.body.split(","):
                             info.append(data.strip())
                         try:
-                            k.sync_karma_to_db(username=info[0],karma=info[1], platform=info[2], subreddit=subreddit.display_name)
+                            k.sync_karma_to_db(username=info[0],karma=int(info[1]), platform=info[2], subreddit=subreddit.display_name)
                         except:
                             logger.exception('FAIL TO SYNC USER_KARMA: {}'.format(info))
                         else:
