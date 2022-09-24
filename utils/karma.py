@@ -181,6 +181,54 @@ def add_karma_to_db(
         raise
 
 
+def sync_karma_to_db(username, karma, platform, subreddit, my_username='-Firekeeper-'):
+    try:
+        connection = db.connect()
+        db.create_tables(connection)
+        for i in range(karma):
+            try:
+                db.sync_karma_plat(connection, my_username, username, platform, subreddit)
+            except IntegrityError:
+                raise
+            except Exception:
+                raise
+    except Exception:
+        raise
+    else:
+        flairsync.main(username)
+
+
+def delete_all_karma_from_user(username):
+    try:
+        connection = db.connect()
+        db.create_tables(connection)
+        db.delete_all(connection, username)
+        # db_karma = db.get_user_karma(connection, username)
+        # print(f"user deleted from DB: {username} : {db_karma}")
+    except Exception as err:
+        raise
+    else:
+        flairsync.main(username)
+
+
+def delete_karma_by_comment_id(comment_id, my_username, reddit):
+    comment = reddit.comment(comment_id)
+    connection = db.connect()
+    db.create_tables(connection)
+    try:
+        db.delete_by_comment_id(connection, comment_id)
+    except Exception:
+        raise
+    else:
+        flairsync.main(comment.parent().author.name)
+        comment.downvote()
+        comment.refresh()
+        replies = comment.replies.replace_more(limit=None)
+        for comment in replies.list():
+            if comment.author == my_username:
+                comment.delete()
+
+
 def add_non_participant_to_db(username, subreddit):
     connection = db.connect()
     db.create_tables(connection)

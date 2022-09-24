@@ -139,7 +139,44 @@ def main():
                             item.reply(body=f"FAIL: u/{username} SOMETHING WENT WRONG!!")
                             logger.exception('FAIL TO ADD NON PARTIPANT: {}'.format(username))
                         else:
-                            item.reply(body=f"SUCCESS: u/{username} added to non partipant")
+                            item.reply(body=f"SUCCESS: u/{username} added to non participant")
+                    if 'remove non participant' in item.subject:
+                        username = item.body
+                        try:
+                            k.remove_non_participant_to_db(username, subreddit.display_name)
+                        except:
+                            item.reply(body=f"FAIL: u/{username} SOMETHING WENT WRONG!!")
+                            logger.exception('FAIL TO ADD NON PARTIPANT: {}'.format(username))
+                        else:
+                            item.reply(body=f"SUCCESS: u/{username} removed from non participant")
+                    if 'thread clear' in item.subject:
+                        try:
+                            submission = reddit.submission(url=f"{item.body}")
+                        except:
+                            logger.exception('FAIL TO RETRIEVE PERMALINK: {}'.format(log.target_permalink))
+                        else:
+                            k.submission_clear(submission, my_username, logger)
+                    if 'sync karma' in item.subject:
+                        info = []
+                        for data in item.body.split(","):
+                            info.append(data.strip())
+                        try:
+                            k.sync_karma_to_db(username=info[0],karma=info[1], platform=info[2], subreddit=subreddit.display_name)
+                        except:
+                            logger.exception('FAIL TO SYNC USER_KARMA: {}'.format(info))
+                    if 'delete all karma' in item.subject:
+                        username = item.body
+                        try:
+                            k.delete_all_karma_from_user(username)
+                        except:
+                            logger.exception('FAIL TO DELETE USER_KARMA: {}'.format(username))
+                    if 'delete karma by comment' in item.subject:
+                        comment_id = item.body
+                        try:
+                            k.delete_karma_by_comment_id(comment_id, my_username, reddit)
+                        except:
+                            logger.exception('FAIL TO DELETE COMMENT_KARMA: {}'.format(comment_id))
+
 
 
 
