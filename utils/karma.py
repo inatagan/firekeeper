@@ -340,5 +340,5 @@ def submission_clear(submission, my_username, logger):
             except Exception:
                 logger.exception('DELETION FAIL: {}'.format(comment.permalink))
             else:
-                flairsync.main(comment_karma.parent().author)
+                flairsync.main(comment_karma.parent().author.name)
                 comment.delete()
