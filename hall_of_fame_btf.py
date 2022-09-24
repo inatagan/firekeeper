@@ -53,12 +53,21 @@ Farewell foul tarnished, should you need guidance of grace [contact the moderato
 ### [About our new karma bot](https://www.reddit.com/r/BeyondTheFog/comments/vrz3gl/traveler_from_beyond_the_fog_let_me_tell_you/)"""
 
 
-def format_table(result_list):
+def format_single_table(result_list):
     columns = len(result_list[0]) + 1
-    TABLE_HEADER = "-|tarnished|+karma"
+    TABLE_HEADER = "-|Tarnished|+karma"
     TABLE_HEADER_2 = '|'.join([':-:'] * columns)
     TABLE_BODY = "\n".join(f"{i}|{row[0]}|{row[1]}"
                 for i, row in enumerate(result_list, start=1))
+    return f"\n{TABLE_HEADER}\n{TABLE_HEADER_2}\n{TABLE_BODY}\n"
+
+
+def format_multiple_table(list_psx, list_pc, list_xbox, list_size):
+    columns = (len(list_psx[0]))*3 + 1
+    TABLE_HEADER = "-|PSX|+karma|PC|+karma|XBOX|+karma"
+    TABLE_HEADER_2 = '|'.join([':-:'] * columns)
+    TABLE_BODY = "\n".join(f"{i+1}|{list_psx[i][0]}|{list_psx[i][1]}|{list_pc[i][0]}|{list_pc[i][1]}|{list_xbox[i][0]}|{list_xbox[i][1]}"
+                for i in range(list_size))
     return f"\n{TABLE_HEADER}\n{TABLE_HEADER_2}\n{TABLE_BODY}\n"
 
 
@@ -72,10 +81,23 @@ def main():
         password=os.environ.get('melina_password'),
     )
     sub=os.environ.get('melina_subreddit')
-    res_week = karma_control.get_weekly_champions_from_subreddit(sub)
-    TABLE_WEEK = format_table(res_week)
-    res_all = karma_control.get_all_time_champions()
-    TABLE_All = format_table(res_all)
+    res_week_psx = karma_control.get_weekly_champions_from_subreddit_by_plat(sub, 'ps')
+    res_week_pc = karma_control.get_weekly_champions_from_subreddit_by_plat(sub, 'pc')
+    res_week_xbox = karma_control.get_weekly_champions_from_subreddit_by_plat(sub, 'xbox')
+    try:
+        TABLE_WEEK = format_multiple_table(res_week_psx, res_week_pc, res_week_xbox, 15)
+    except IndexError as err:
+        print(err)
+    # TABLE_WEEK = format_single_table(res_week_pc)
+    res_all_psx = karma_control.get_all_time_champions_by_plat('ps')
+    res_all_pc = karma_control.get_all_time_champions_by_plat('pc')
+    res_all_xbox = karma_control.get_all_time_champions_by_plat('xbox')
+    # res_all = karma_control.get_all_time_champions()
+    # TABLE_All = format_single_table(res_all)
+    try:
+        TABLE_All = format_multiple_table(res_all_psx, res_all_pc, res_all_xbox, 10)
+    except IndexError as err:
+        print(err)
     today_date = date.today()
     image = InlineImage(path="assets/banner.jpg", caption="Brave Tarnished... Thy strength befits a crown.")
     media = {"image1": image}
