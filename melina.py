@@ -11,6 +11,7 @@ from praw.models import Message
 
 
 
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s [ %(levelname)s ] | [ %(name)s ]: %(message)s')
@@ -24,14 +25,14 @@ logger.addHandler(log_file_handler)
 def main():
     load_dotenv()
     reddit = praw.Reddit(
-        client_id=os.environ.get('schierke_client_id'),
-        client_secret=os.environ.get('schierke_client_secret'),
-        user_agent=os.environ.get('schierke_user_agent'),
-        username=os.environ.get('schierke_username'),
-        password=os.environ.get('schierke_password'),
+        client_id=os.environ.get('melina_client_id'),
+        client_secret=os.environ.get('melina_client_secret'),
+        user_agent=os.environ.get('melina_user_agent'),
+        username=os.environ.get('melina_username'),
+        password=os.environ.get('melina_password'),
     )
-    my_sub = os.environ.get('schierke_subreddit')
-    my_username = os.environ.get('schierke_username')
+    my_sub = os.environ.get('melina_subreddit')
+    my_username = os.environ.get('melina_username')
     subreddit = reddit.subreddit(my_sub)
 
 

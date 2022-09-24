@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from sqlite3 import IntegrityError
 from utils import karma as k
 from prawcore.exceptions import PrawcoreException
+from praw.models import Message
 
 
 
@@ -31,13 +32,23 @@ def main():
         password=os.environ.get('my_password'),
     )
     my_sub = os.environ.get('my_subreddit')
+    my_username = os.environ.get('my_username')
     subreddit = reddit.subreddit(my_sub)
+
+
+    #multiple streams
+    comment_stream = subreddit.stream.comments(pause_after=-1, skip_existing=True)
+    mod_log_stream = subreddit.mod.stream.log(pause_after=-1, skip_existing=True)
+    # modmail_stream = subreddit.mod.stream.modmail_conversations(pause_after=-1, skip_existing=True)
+    inbox_stream = reddit.inbox.stream(pause_after=-1, skip_existing=True)
 
 
     running = True
     while running:
         try:
-            for comment in subreddit.stream.comments(skip_existing=True):
+            for comment in comment_stream:
+                if comment is None:
+                    break
                 if comment.body.lower().strip().startswith(("+karma", "\\+karma")):
                     if comment.is_root:
                         ERROR_TOP_LEVEL = f"F'rgive me /u/{comment.author}, thee can't award +karma from a top leveleth comment!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}."
@@ -78,6 +89,60 @@ def main():
                                     post.mod.flair(text=":sunbro: Duty Fulfilled!", css_class="duty-fulfilled", flair_template_id="25213842-1029-11e6-ba76-0ecc83f85b2b")
                                 except:
                                     logger.exception('FAILED TO CLOSE SUBMISSION {}'.format(comment.submission.permalink))
+
+
+            for log in mod_log_stream:
+                if log is None:
+                    break
+                if log.action == "removelink":
+                    try:
+                        submission = reddit.submission(url=f"https://www.reddit.com{log.target_permalink}")
+                    except:
+                        logger.exception('FAIL TO RETRIEVE PERMALINK: {}'.format(log.target_permalink))
+                    else:
+                        k.submission_clear(submission, my_username, logger)
+                if log.action == "banuser" and log.details == "permanent":
+                    try:
+                        k.add_non_participant_to_db(log.target_author, subreddit.display_name)
+                    except:
+                        logger.exception('FAIL TO ADD TO DB_NON_PARTICIPANT: {}'.format(log.target_author))
+                    try:
+                        subreddit.flair.set(log.target_author, text="quarantined", css_class="red")
+                    except:
+                        logger.exception('FAIL TO SET USERFLAIR: {}'.format(log.target_author))
+            
+
+            # for modmail in modmail_stream:
+            #     if modmail is None:
+            #         break
+            #     if "about the false maiden" in modmail.subject.lower() or "about+the+false+maiden" in modmail.subject.lower():
+            #         conversation = subreddit.modmail(modmail.id, mark_read=True)
+            #         for message in conversation.messages:
+            #             if "shabriri grape" in message.body_markdown.lower():
+            #                 try:
+            #                     modmail.reply(body=f"Disgraced /u/{message.author}! *You...* have inherited the Frenzied Flame. A pity. You are no longer fit. Our journey together ends here. And remember... Should you rise as the Lord of Chaos, I will kill you, as sure as night follows day. Such is my duty, for allowing you the strength of runes. Goodbye, my companion. Goodbye, Torrent... I will seek you, as far as you may travel... To deliver you what is yours. **Destined Death**.", author_hidden=False)
+            #                 except:
+            #                     logger.exception('FAIL TO REPLY MODMAIL: {}'.format(modmail.id))
+
+
+            for item in inbox_stream:
+                if item is None:
+                    break
+                if isinstance(item, Message):
+                    if 'add non participant' in item.subject:
+                        username = item.body
+                        try:
+                            k.add_non_participant_to_db(username, subreddit.display_name)
+                        except IntegrityError:
+                            item.reply(body=f"FAIL: u/{username} already is non participant")
+                        except:
+                            item.reply(body=f"FAIL: u/{username} SOMETHING WENT WRONG!!")
+                            logger.exception('FAIL TO ADD NON PARTIPANT: {}'.format(username))
+                        else:
+                            item.reply(body=f"SUCCESS: u/{username} added to non partipant")
+
+
+
         except KeyboardInterrupt:
             logger.info('Termination received. Goodbye!')
             running = False
