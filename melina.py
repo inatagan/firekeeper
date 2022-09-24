@@ -156,7 +156,7 @@ def main():
                             logger.exception('FAIL TO RETRIEVE PERMALINK: {}'.format(log.target_permalink))
                         else:
                             k.submission_clear(submission, my_username, logger)
-                            item.reply(body=f"SUCCESS: submission cleaned: {submission}")
+                            item.reply(body=f"SUCCESS: submission cleaned: {submission.permalink}")
                     if 'sync karma' in item.subject:
                         info = []
                         for data in item.body.split(","):
