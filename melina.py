@@ -77,10 +77,11 @@ def main():
                             k.moderator_safe_reply(logger, comment, ERROR_UNKNOWN)
                             logger.exception('THIS CANNOT CONTINUE.. {}'.format(comment.permalink))
                         else:
-                            try:
-                                flairsync.main(comment.parent().author.name)
-                            except Exception:
-                                logger.exception('FLAIRSYNC FAILED {}'.format(comment.permalink))
+                            if not k.is_non_participant(comment.parent().author.name):
+                                try:
+                                    flairsync.main(comment.parent().author.name)
+                                except Exception:
+                                    logger.exception('FLAIRSYNC FAILED {}'.format(comment.permalink))
                             SUCCESS_REPLY=f"Tarnished guided by grace /u/{comment.author}, in the name of Queen Marika the Eternal I shall grant +karma to user /u/{comment.parent().author.name}!  \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
                             k.moderator_safe_reply(logger, comment, SUCCESS_REPLY)
                             if 'close' in comment.body.lower() and comment.is_submitter:

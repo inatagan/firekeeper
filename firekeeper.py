@@ -77,10 +77,11 @@ def main():
                             k.moderator_safe_reply(logger, comment, ERROR_UNKNOWN)
                             logger.exception('THIS CANNOT CONTINUE.. {}'.format(comment.permalink))
                         else:
-                            try:
-                                flairsync.main(comment.parent().author.name)
-                            except Exception:
-                                logger.exception('FLAIRSYNC FAILED {}'.format(comment.permalink))
+                            if not k.is_non_participant(comment.parent().author.name):
+                                try:
+                                    flairsync.main(comment.parent().author.name)
+                                except Exception:
+                                    logger.exception('FLAIRSYNC FAILED {}'.format(comment.permalink))
                             SUCCESS_REPLY = f"/u/{comment.author}, my thanks for the +karma thou'st given to us'r /u/{comment.parent().author.name}!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}."
                             k.moderator_safe_reply(logger, comment, SUCCESS_REPLY)
                             if 'close' in comment.body.lower() and comment.is_submitter:

@@ -251,6 +251,12 @@ def remove_non_participant_to_db(username, subreddit):
         raise
 
 
+def is_non_participant(username):
+    connection = db.connect()
+    db.create_tables(connection)
+    return db.is_non_participant(connection, username) > 0
+
+
 def delete_all_userflair(reddit, sub):
     subreddit = reddit.subreddit(sub)
     deleted = subreddit.flair.delete_all()

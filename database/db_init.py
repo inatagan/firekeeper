@@ -91,6 +91,9 @@ DELETE_KARMA_COMMENT_ID = """DELETE FROM karma WHERE comment_id = ?"""
 REMOVE_FROM_NON_PARTICIPANT = """DELETE FROM non_participant WHERE username = ? AND subreddit = ?;"""
 
 
+IS_NON_PARTICIPANT = """SELECT EXISTS (SELECT 1 FROM non_participant WHERE username = ?);"""
+
+
 # Functions
 def connect():
     return sqlite3.connect('summonsign.db')
@@ -180,4 +183,10 @@ def delete_all(connection, username):
 def delete_by_comment_id(connection, comment_id):
     with connection:
         connection.execute(DELETE_KARMA_COMMENT_ID, (comment_id,))
+
+
+def is_non_participant(connection, username):
+    with connection:
+        return connection.execute(IS_NON_PARTICIPANT, (username,)).fetchone()[0]
+
 

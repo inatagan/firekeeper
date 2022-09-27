@@ -48,6 +48,68 @@ Please use and run this bot as a background service with `systemd`.
 
 /home/pi/firekeeper/karmakeeper.py
 
+### How to use
+
+#### The +karma command
+The main feature of this bot is to monitor a subreddit, this bot will scan through all the comments looking for this command, to trigger the comment reply must start with the command `+karma`, then this bot will do all the checks and reply appropriately.
+
+#### The mod log
+This bot also will keep track of moderator actions and in the event of a removal of thread where +karma was given, on the event of the removal the bot will scan the thread to see if any +karma was given and if it was it will automatically reverse it back. Besides the checks already implemented it is also understood that this bot will not reward rule breaking submissions.
+
+#### Moderator's commands
+To help better manage the +karma system now there is several helpful commands through private messages available to moderators. Be aware that to be able to use these commands the moderator must have permission to send private messages to this bot's account.
+
+These commands are quite simple to use, when sending a private message to the bot use the subject field to add a command and then use the body of the message to add any data necessary.
+
+    add non participant
+
+Subject input: `add non participant`.
+
+Body input: `username`
+
+This will add a user to the non participants list, this is a list of users that can use the subreddit without being part of the karma system, for those who desire and also banned users are automatically added to this list.
+
+    remove non participant
+
+Subject input: `remove non participant`
+
+Body input: `username`
+
+This will remove a user of the non participants list.
+
+    thread clear
+
+Subject input: `thread clear`
+
+Body input: `URL`
+
+This will clear all the karma given in a submission, the `URL` must be the permalink to the thread, it also works on threads that are deleted by the original poster.
+
+    sync karma
+
+Subject input: `sync karma`
+
+Body input: `username`, `karma`, `platform`
+
+This will add one or many karma to a user. The body input must be in the described other separated by commas `,`.
+
+    delete all karma
+
+Subject input: `delete all karma`
+
+Body input: `username`
+
+This will delete all karma of a user.
+
+    delete karma by comment
+
+Subject input: `delete karma by comment`
+
+Body input: `comment id`
+
+This will delete one particular karma from a comment.
+
+
 # Helpful links
 
 https://forums.raspberrypi.com/viewtopic.php?t=202146
