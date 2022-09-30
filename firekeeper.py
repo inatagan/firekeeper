@@ -181,11 +181,11 @@ def main():
                         else:
                             item.reply(body=f"SUCCESS: u/{item.body} karma deleted!!")
                     if 'delete karma by comment' in item.subject:
-                        comment_id = item.body
+                        comment = reddit.comment(url=item.body)
                         try:
-                            k.delete_karma_by_comment_id(comment_id, my_username, reddit)
+                            k.delete_karma_by_comment_id(comment.id, my_username, reddit)
                         except:
-                            logger.exception('FAIL TO DELETE COMMENT_KARMA: {}'.format(comment_id))
+                            logger.exception('FAIL TO DELETE COMMENT_KARMA: {}'.format(comment.permalink))
                         else:
                             comment = reddit.comment(comment_id)
                             item.reply(body=f"SUCCESS: karma deleted: \n\n{comment.permalink}")
