@@ -187,7 +187,6 @@ def main():
                         except:
                             logger.exception('FAIL TO DELETE COMMENT_KARMA: {}'.format(comment.permalink))
                         else:
-                            comment = reddit.comment(comment_id)
                             item.reply(body=f"SUCCESS: karma deleted: \n\n{comment.permalink}")
 
 
