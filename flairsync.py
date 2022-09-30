@@ -23,7 +23,9 @@ def main(username):
     else:
         sub_list = ('SummonSign', 'BeyondTheFog')
         for sub in sub_list:
-            if karma.can_change_flair(reddit, sub, username):
+            if karma.is_non_participant(username) or user_karma == 0:
+                reddit.subreddit(sub).flair.delete(username)
+            elif karma.can_change_flair(reddit, sub, username):
                 if user_karma > 1000:
                     if 'SummonSign' in sub:
                         new_flair_text = str(f'+{user_karma} k | Lord of Hollows')

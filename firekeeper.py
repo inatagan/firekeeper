@@ -65,6 +65,9 @@ def main():
                     elif not k.verify_negotiation(comment.author, comment.parent().author, comment, comment.parent()):
                         ERROR_NEGOTIATION_FAIL = f"/u/{comment.author}, the fire fades and the Lords go without thrones. Surrender your fires, to the true heir. Let him grant Death.. to the old gods of Lordran, deliverers of the *First Flame*!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}."
                         k.moderator_safe_reply(logger, comment, ERROR_NEGOTIATION_FAIL)
+                    elif k.is_non_participant(comment.parent().author.name):
+                        NON_PARTICIPANT_REPLY = f"/u/{comment.author}, my thanks for the +karma thou'st given!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}."
+                        k.moderator_safe_reply(logger, comment, NON_PARTICIPANT_REPLY)
                     else:
                         try:
                             plat = k.get_platform(comment.submission.title)
@@ -77,14 +80,13 @@ def main():
                             k.moderator_safe_reply(logger, comment, ERROR_UNKNOWN)
                             logger.exception('THIS CANNOT CONTINUE.. {}'.format(comment.permalink))
                         else:
-                            if not k.is_non_participant(comment.parent().author.name):
-                                try:
-                                    flairsync.main(comment.parent().author.name)
-                                except Exception:
-                                    logger.exception('FLAIRSYNC FAILED {}'.format(comment.permalink))
+                            try:
+                                flairsync.main(comment.parent().author.name)
+                            except Exception:
+                                logger.exception('FLAIRSYNC FAILED {}'.format(comment.permalink))
                             SUCCESS_REPLY = f"/u/{comment.author}, my thanks for the +karma thou'st given to us'r /u/{comment.parent().author.name}!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}."
                             k.moderator_safe_reply(logger, comment, SUCCESS_REPLY)
-                            if 'close' in comment.body.lower() and comment.is_submitter:
+                            if any(k_word in comment.body.lower() for k_word in ('close', 'complete', 'thanks')):
                                 post = comment.submission
                                 try:
                                     post.mod.flair(text=":sunbro: Duty Fulfilled!", css_class="duty-fulfilled", flair_template_id="25213842-1029-11e6-ba76-0ecc83f85b2b")
@@ -141,6 +143,7 @@ def main():
                             logger.exception('FAIL TO ADD NON PARTIPANT: {}'.format(username))
                         else:
                             item.reply(body=f"SUCCESS: u/{username} added to non participant")
+                            flairsync.main(username)
                     if 'remove non participant' in item.subject:
                         username = item.body
                         try:

@@ -65,6 +65,9 @@ def main():
                     elif not k.verify_negotiation(comment.author, comment.parent().author, comment, comment.parent()):
                         ERROR_NEGOTIATION_FAIL=f"Disgraced /u/{comment.author}! Please put a stop to this madness. The Lord of Frenzied Flame is no lord at all. When the land they preside over is lifeless!! \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
                         k.moderator_safe_reply(logger, comment, ERROR_NEGOTIATION_FAIL)
+                    elif k.is_non_participant(comment.parent().author.name):
+                        NON_PARTICIPANT_REPLY=f"Tarnished guided by grace /u/{comment.author}, in the name of Queen Marika the Eternal I shall turn your runes into strength!  \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
+                        k.moderator_safe_reply(logger, comment, NON_PARTICIPANT_REPLY)
                     else:
                         try:
                             plat = k.get_platform(comment.submission.title)
@@ -77,14 +80,13 @@ def main():
                             k.moderator_safe_reply(logger, comment, ERROR_UNKNOWN)
                             logger.exception('THIS CANNOT CONTINUE.. {}'.format(comment.permalink))
                         else:
-                            if not k.is_non_participant(comment.parent().author.name):
-                                try:
-                                    flairsync.main(comment.parent().author.name)
-                                except Exception:
-                                    logger.exception('FLAIRSYNC FAILED {}'.format(comment.permalink))
+                            try:
+                                flairsync.main(comment.parent().author.name)
+                            except Exception:
+                                logger.exception('FLAIRSYNC FAILED {}'.format(comment.permalink))
                             SUCCESS_REPLY=f"Tarnished guided by grace /u/{comment.author}, in the name of Queen Marika the Eternal I shall grant +karma to user /u/{comment.parent().author.name}!  \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
                             k.moderator_safe_reply(logger, comment, SUCCESS_REPLY)
-                            if 'close' in comment.body.lower() and comment.is_submitter:
+                            if any(k_word in comment.body.lower() for k_word in ('close', 'complete', 'thanks')):
                                 post = comment.submission
                                 try:
                                     post.mod.flair(text=":sunbro: Duty Fulfilled!", css_class="duty-fulfilled", flair_template_id="186b0ec2-9343-11ec-b414-cefd332e8238")
@@ -116,12 +118,12 @@ def main():
             for modmail in modmail_stream:
                 if modmail is None:
                     break
-                if "about the false maiden" in modmail.subject.lower() or "about+the+false+maiden" in modmail.subject.lower():
+                if any(subject in modmail.subject.lower() for subject in ("about the false maiden", "about+the+false+maiden")):
                     conversation = subreddit.modmail(modmail.id, mark_read=True)
                     for message in conversation.messages:
-                        if "shabriri grape" in message.body_markdown.lower():
+                        if any(shabriri_grape in message.body_markdown.lower() for shabriri_grape in ("shabriri", "grape", "have", "one")):
                             try:
-                                modmail.reply(body=f"Disgraced /u/{message.author}! *You...* have inherited the Frenzied Flame. A pity. You are no longer fit. Our journey together ends here. And remember... Should you rise as the Lord of Chaos, I will kill you, as sure as night follows day. Such is my duty, for allowing you the strength of runes. Goodbye, my companion. Goodbye, Torrent... I will seek you, as far as you may travel... To deliver you what is yours. **Destined Death**.", author_hidden=False)
+                                modmail.reply(body=f"Disgraced /u/{message.author}! *You...* have inherited the Frenzied Flame. A pity. You are no longer fit. Our journey together ends here. And remember... Should you rise as the Lord of Chaos, I will kill you, as sure as night follows day. Such is my duty, for allowing you the strength of runes. Goodbye, my companion. Goodbye, Torrent... I will seek you, as far as you may travel... To deliver you what is yours. **Destined Death**. \n\n *** \n I am a bot, and this action was performed automatically.", author_hidden=False)
                             except:
                                 logger.exception('FAIL TO REPLY MODMAIL: {}'.format(modmail.id))
 
@@ -141,6 +143,7 @@ def main():
                             logger.exception('FAIL TO ADD NON PARTIPANT: {}'.format(username))
                         else:
                             item.reply(body=f"SUCCESS: u/{username} added to non participant")
+                            flairsync.main(username)
                     if 'remove non participant' in item.subject:
                         username = item.body
                         try:

@@ -203,8 +203,6 @@ def delete_all_karma_from_user(username):
         connection = db.connect()
         db.create_tables(connection)
         db.delete_all(connection, username)
-        # db_karma = db.get_user_karma(connection, username)
-        # print(f"user deleted from DB: {username} : {db_karma}")
     except Exception as err:
         raise
     else:
@@ -267,7 +265,7 @@ def can_change_flair(reddit, sub, username):
     user_info = tuple(reddit.subreddit(sub).flair(redditor=username))
     user_css = user_info[0]['flair_css_class']
     try:
-        if 'red' in user_css or 'mod' in user_css:
+        if any(css_class in user_css for css_class in ('red', 'mod', 'custom')):
             return False
         else:
             return True
