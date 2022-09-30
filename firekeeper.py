@@ -86,7 +86,7 @@ def main():
                                 logger.exception('FLAIRSYNC FAILED {}'.format(comment.permalink))
                             SUCCESS_REPLY = f"/u/{comment.author}, my thanks for the +karma thou'st given to us'r /u/{comment.parent().author.name}!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}."
                             k.moderator_safe_reply(logger, comment, SUCCESS_REPLY)
-                            if any(k_word in comment.body.lower() for k_word in ('close', 'complete', 'thanks')):
+                            if any(word in comment.body.lower() for word in ('close', 'complete', 'thanks', 'gg')) and comment.is_submitter:
                                 post = comment.submission
                                 try:
                                     post.mod.flair(text=":sunbro: Duty Fulfilled!", css_class="duty-fulfilled", flair_template_id="25213842-1029-11e6-ba76-0ecc83f85b2b")

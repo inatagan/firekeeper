@@ -86,7 +86,7 @@ def main():
                                 logger.exception('FLAIRSYNC FAILED {}'.format(comment.permalink))
                             SUCCESS_REPLY=f"Tarnished guided by grace /u/{comment.author}, in the name of Queen Marika the Eternal I shall grant +karma to user /u/{comment.parent().author.name}!  \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
                             k.moderator_safe_reply(logger, comment, SUCCESS_REPLY)
-                            if any(k_word in comment.body.lower() for k_word in ('close', 'complete', 'thanks')):
+                            if any(word in comment.body.lower() for word in ('close', 'complete', 'thanks', 'gg')) and comment.is_submitter:
                                 post = comment.submission
                                 try:
                                     post.mod.flair(text=":sunbro: Duty Fulfilled!", css_class="duty-fulfilled", flair_template_id="186b0ec2-9343-11ec-b414-cefd332e8238")
