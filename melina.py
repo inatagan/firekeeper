@@ -196,7 +196,7 @@ def main():
             logger.info('Termination received. Goodbye!')
             running = False
         except PrawcoreException as err:
-            logger.exception('Oops I did it again.. {} comment? {}'.format(err, comment.permalink))
+            logger.exception('Oops I did it again.. ERROR= {}'.format(err))
             time.sleep(10)
 
 
