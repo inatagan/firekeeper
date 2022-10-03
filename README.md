@@ -105,7 +105,7 @@ This will delete all karma of a user.
 
 Subject input: `delete karma by comment`
 
-Body input: `comment id`
+Body input: `comment permalink`
 
 This will delete one particular karma from a comment.
 
