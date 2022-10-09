@@ -21,7 +21,7 @@ def main(username):
     except Exception as err:
         return err
     else:
-        sub_list = ('SummonSign', 'BeyondTheFog')
+        sub_list = ('SummonSign', 'BeyondTheFog', 'PatchesEmporium')
         for sub in sub_list:
             if karma.is_non_participant(username) or user_karma == 0:
                 reddit.subreddit(sub).flair.delete(username)
@@ -39,6 +39,12 @@ def main(username):
                             reddit.subreddit(sub).flair.set(username, text=new_flair_text, css_class=user_css)
                         except:
                             pass
+                    elif 'PatchesEmporium' in sub:
+                        new_flair_text = str(f'+{user_karma} k | Red Eyed Gypsy')
+                        try:
+                            reddit.subreddit(sub).flair.set(username, text=new_flair_text, css_class=user_css)
+                        except:
+                            pass
                 elif user_karma > 500:
                     if 'SummonSign' in sub:
                         new_flair_text = str(f'+{user_karma} k | Grossly Incandescent')
@@ -48,6 +54,12 @@ def main(username):
                             pass
                     elif 'BeyondTheFog' in sub:
                         new_flair_text = str(f'+{user_karma} k | Lord of Frenzied Flame')
+                        try:
+                            reddit.subreddit(sub).flair.set(username, text=new_flair_text, css_class=user_css)
+                        except:
+                            pass
+                    elif 'PatchesEmporium' in sub:
+                        new_flair_text = str(f'+{user_karma} k | Imprisoned Merchant')
                         try:
                             reddit.subreddit(sub).flair.set(username, text=new_flair_text, css_class=user_css)
                         except:
@@ -65,6 +77,12 @@ def main(username):
                             reddit.subreddit(sub).flair.set(username, text=new_flair_text, css_class=user_css)
                         except:
                             pass
+                    elif 'PatchesEmporium' in sub:
+                        new_flair_text = str(f'+{user_karma} k | Abandoned Merchant')
+                        try:
+                            reddit.subreddit(sub).flair.set(username, text=new_flair_text, css_class=user_css)
+                        except:
+                            pass
                 elif user_karma > 100:
                     if 'SummonSign' in sub:
                         new_flair_text = str(f'+{user_karma} k | Warrior of Sunlight')
@@ -74,6 +92,12 @@ def main(username):
                             pass
                     elif 'BeyondTheFog' in sub:
                         new_flair_text = str(f'+{user_karma} k | Furled Finger')
+                        try:
+                            reddit.subreddit(sub).flair.set(username, text=new_flair_text, css_class=user_css)
+                        except:
+                            pass
+                    elif 'PatchesEmporium' in sub:
+                        new_flair_text = str(f'+{user_karma} k | Hermit Merchant')
                         try:
                             reddit.subreddit(sub).flair.set(username, text=new_flair_text, css_class=user_css)
                         except:
@@ -91,6 +115,12 @@ def main(username):
                             reddit.subreddit(sub).flair.set(username, text=new_flair_text, css_class=user_css)
                         except:
                             pass
+                    elif 'PatchesEmporium' in sub:
+                        new_flair_text = str(f'+{user_karma} k | Merchant')
+                        try:
+                            reddit.subreddit(sub).flair.set(username, text=new_flair_text, css_class=user_css)
+                        except:
+                            pass
                 elif user_karma > 15:
                     if 'SummonSign' in sub:
                         new_flair_text = str(f'+{user_karma} k | Ash')
@@ -100,6 +130,12 @@ def main(username):
                             pass
                     elif 'BeyondTheFog' in sub:
                         new_flair_text = str(f'+{user_karma} k | Foul Tarnished')
+                        try:
+                            reddit.subreddit(sub).flair.set(username, text=new_flair_text, css_class=user_css)
+                        except:
+                            pass
+                    elif 'PatchesEmporium' in sub:
+                        new_flair_text = str(f'+{user_karma} karma')
                         try:
                             reddit.subreddit(sub).flair.set(username, text=new_flair_text, css_class=user_css)
                         except:

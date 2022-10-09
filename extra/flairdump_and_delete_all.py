@@ -13,13 +13,14 @@ def main():
     )
     my_sub = os.environ.get('my_subreddit')
     subreddit = reddit.subreddit(my_sub)
+    userflair_list = subreddit.flair.delete_all()
 
 
-    for flair in subreddit.flair():
+    for flair in userflair_list:
         # Use the command bellow to create an quick and dirty flair list for reference:
-        # unbuffer python3 flairdump.py 2>&1 | tee -a sub_flair_list.log
-        user_info = (flair['user'].name, flair['flair_text'])
-        print(user_info)
+        # unbuffer python3 flairdump_and_delete_all.py 2>&1 | tee -a sub_flair_list.log
+        # user_info = (flair['user'].name, flair['flair_text'])
+        print(flair)
 
 
 

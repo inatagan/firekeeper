@@ -10,8 +10,7 @@ StartLimitBurst=5
 Restart=on-failure
 RestartSec=5s
 Type=idle
-WorkingDirectory= /home/$USER/firekeeper/  
-ExecStart=/usr/bin/python /home/$USER/firekeeper/patches.py  
+ExecStart=/usr/bin/python /home/$USER/firekeeper/simple_flair_bot/patches_bot.py
 User=$USER  
 KillSignal=SIGINT  
 

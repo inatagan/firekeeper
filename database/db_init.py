@@ -94,6 +94,12 @@ REMOVE_FROM_NON_PARTICIPANT = """DELETE FROM non_participant WHERE username = ? 
 IS_NON_PARTICIPANT = """SELECT EXISTS (SELECT 1 FROM non_participant WHERE username = ?);"""
 
 
+KARMA_FROM_TO = """SELECT from_user, COUNT(from_user) FROM karma WHERE to_user = ? GROUP BY from_user ORDER BY COUNT(from_user) DESC;"""
+
+
+HALL_OF_SLAYERS = """SELECT to_user, COUNT(to_user) FROM karma WHERE submission_title like '%demon___souls%' OR submission_title like 'des_' AND date BETWEEN datetime('now', '-7 days') AND datetime('now') AND to_user NOT IN (SELECT username FROM non_participant GROUP BY username) GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 20;"""
+
+
 # Functions
 def connect():
     return sqlite3.connect('summonsign.db')
