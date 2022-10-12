@@ -116,6 +116,8 @@ def already_awarded(award_comment):
 
 
 def get_platform(submission_title):
+    if 'ps3' in str(submission_title).lower():
+        return 'ps3'
     if 'ps4' in str(submission_title).lower():
         return 'ps4'
     if 'ps5' in str(submission_title).lower():
@@ -126,6 +128,8 @@ def get_platform(submission_title):
         return 'xbox'
     if 'pc' in str(submission_title).lower():
         return 'pc'
+    if 'switch' in str(submission_title).lower():
+        return 'switch'
 
 
 def get_submission_id(comment):
