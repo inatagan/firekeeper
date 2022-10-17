@@ -89,9 +89,9 @@ def main():
     except IndexError as err:
         print(err)
     # TABLE_WEEK = format_single_table(res_week_pc)
-    res_all_psx = karma_control.get_all_time_champions_by_plat('ps')
-    res_all_pc = karma_control.get_all_time_champions_by_plat('pc')
-    res_all_xbox = karma_control.get_all_time_champions_by_plat('xbox')
+    res_all_psx = karma_control.get_all_time_champions_by_plat_coop('ps')
+    res_all_pc = karma_control.get_all_time_champions_by_plat_coop('pc')
+    res_all_xbox = karma_control.get_all_time_champions_by_plat_coop('xbox')
     # res_all = karma_control.get_all_time_champions()
     # TABLE_All = format_single_table(res_all)
     try:

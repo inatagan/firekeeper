@@ -320,10 +320,24 @@ def get_all_time_champions():
     return result_list
 
 
+def get_all_time_champions_coop():
+    connection = db.connect()
+    db.create_tables(connection)
+    result_list = db.get_all_time_champions_coop(connection)
+    return result_list
+
+
 def get_all_time_champions_by_plat(platform):
     connection = db.connect()
     db.create_tables(connection)
     result_list = db.get_all_time_champions_by_plat(connection, platform)
+    return result_list
+
+
+def get_all_time_champions_by_plat_coop(platform):
+    connection = db.connect()
+    db.create_tables(connection)
+    result_list = db.get_all_time_champions_by_plat_coop(connection, platform)
     return result_list
 
 
