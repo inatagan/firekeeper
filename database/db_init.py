@@ -61,13 +61,13 @@ GET_USER_KARMA = """SELECT COUNT(to_user) FROM karma WHERE to_user = ?;"""
 GET_ALL_TIME_CHAMPIONS = """SELECT to_user, COUNT(to_user) FROM karma WHERE to_user NOT IN (SELECT username FROM non_participant GROUP BY username) GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 10;"""
 
 
-GET_ALL_TIME_CHAMPIONS_COOP = """SELECT to_user, COUNT(to_user) FROM karma WHERE subreddit = 'SummonSign' OR subreddit = 'BeyondTheFog' AND to_user NOT IN (SELECT username FROM non_participant GROUP BY username) GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 10;"""
+GET_ALL_TIME_CHAMPIONS_COOP = """SELECT to_user, COUNT(to_user) FROM karma WHERE to_user NOT IN (SELECT username FROM non_participant GROUP BY username) AND subreddit <> 'PatchesEmporium' GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 10;"""
 
 
 GET_ALL_TIME_CHAMPIONS_BY_PLATFORM = """SELECT to_user, COUNT(to_user) FROM karma WHERE platform LIKE ? AND to_user NOT IN (SELECT username FROM non_participant GROUP BY username) GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 10;"""
 
 
-GET_ALL_TIME_CHAMPIONS_BY_PLATFORM_COOP = """SELECT to_user, COUNT(to_user) FROM karma WHERE subreddit = 'SummonSign' OR subreddit = 'BeyondTheFog' AND platform LIKE ? AND to_user NOT IN (SELECT username FROM non_participant GROUP BY username) GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 10;"""
+GET_ALL_TIME_CHAMPIONS_BY_PLATFORM_COOP = """SELECT to_user, COUNT(to_user) FROM karma WHERE platform LIKE ? AND to_user NOT IN (SELECT username FROM non_participant GROUP BY username) AND subreddit <> 'PatchesEmporium' GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 10;"""
 
 
 GET_WEEKLY_CHAMPIONS = """SELECT to_user, COUNT(to_user) FROM karma WHERE date BETWEEN datetime('now', '-7 days') AND datetime('now') AND to_user NOT IN (SELECT username FROM non_participant GROUP BY username) GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 20;"""
