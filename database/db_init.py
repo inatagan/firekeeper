@@ -103,7 +103,11 @@ IS_NON_PARTICIPANT = """SELECT EXISTS (SELECT 1 FROM non_participant WHERE usern
 KARMA_FROM_TO = """SELECT from_user, COUNT(from_user) FROM karma WHERE to_user = ? GROUP BY from_user ORDER BY COUNT(from_user) DESC;"""
 
 
-HALL_OF_SLAYERS = """SELECT to_user, COUNT(to_user) FROM karma WHERE submission_title like '%demon___souls%' OR submission_title like 'des_' AND date BETWEEN datetime('now', '-7 days') AND datetime('now') AND to_user NOT IN (SELECT username FROM non_participant GROUP BY username) GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 20;"""
+HALL_OF_SLAYERS = """SELECT to_user, COUNT(to_user) FROM karma WHERE date BETWEEN datetime('now', '-20 days') AND datetime('now') AND to_user NOT IN (SELECT username FROM non_participant GROUP BY username) AND submission_title like '%demon%' OR submission_title like '%des%' AND subreddit = 'SummonSign' GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 20;"""
+
+# load the module below to use regex with sqlite
+# .load /usr/lib/sqlite3/pcre.so
+HALL_OF_SLAYERS_REGEX = """SELECT to_user, COUNT(to_user) FROM karma WHERE date BETWEEN datetime('now', '-20 days') AND datetime('now') AND to_user NOT IN (SELECT username FROM non_participant GROUP BY username) AND lower(submission_title) REGEXP "demon's ?souls|demons? ?souls|desr?" AND subreddit = 'SummonSign' GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 20;"""
 
 
 # Functions

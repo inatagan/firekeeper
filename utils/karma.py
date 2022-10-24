@@ -392,7 +392,7 @@ def moderator_safe_reply(logger, comment, message):
         logger.exception('REPLY FAIL: {}'.format(permalink))
         return False
     else:
-        bot_reply.mod.distinguish(how="yes")
+        # bot_reply.mod.distinguish(how="yes")
         bot_reply.mod.lock()
     logger.debug('REPLIED TO: {}'.format(permalink))
     return True
