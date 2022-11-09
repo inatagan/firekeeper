@@ -60,6 +60,15 @@ def format_table(result_list):
     return f"\n{TABLE_HEADER}\n{TABLE_HEADER_2}\n{TABLE_BODY}\n"
 
 
+def format_multiple_table(list_psx, list_pc, list_xbox, list_size):
+    columns = (len(list_psx[0]))*3 + 1
+    TABLE_HEADER = "-|PSX|+karma|PC|+karma|XBOX|+karma"
+    TABLE_HEADER_2 = '|'.join([':-:'] * columns)
+    TABLE_BODY = "\n".join(f"{i+1}|{list_psx[i][0]}|{list_psx[i][1]}|{list_pc[i][0]}|{list_pc[i][1]}|{list_xbox[i][0]}|{list_xbox[i][1]}"
+                for i in range(list_size))
+    return f"\n{TABLE_HEADER}\n{TABLE_HEADER_2}\n{TABLE_BODY}\n"
+
+
 def main():
     load_dotenv()
     reddit = praw.Reddit(
@@ -70,10 +79,30 @@ def main():
         password=os.environ.get('my_password'),
     )
     sub=os.environ.get('my_subreddit')
-    res_week = karma_control.get_weekly_champions_from_subreddit(sub)
-    TABLE_WEEK = format_table(res_week)
-    res_all = karma_control.get_all_time_champions_coop()
-    TABLE_All = format_table(res_all)
+
+
+    # res_week = karma_control.get_weekly_champions_from_subreddit(sub)
+    # TABLE_WEEK = format_table(res_week)
+    res_week_psx = karma_control.get_weekly_champions_from_subreddit_by_plat(sub, 'ps')
+    res_week_pc = karma_control.get_weekly_champions_from_subreddit_by_plat(sub, 'pc')
+    res_week_xbox = karma_control.get_weekly_champions_from_subreddit_by_plat(sub, 'xbox')
+    try:
+        TABLE_WEEK = format_multiple_table(res_week_psx, res_week_pc, res_week_xbox, 10)
+    except IndexError as err:
+        print(err)
+
+
+    # res_all = karma_control.get_all_time_champions_coop()
+    # TABLE_All = format_table(res_all)
+    res_all_psx = karma_control.get_all_time_champions_by_plat_coop('ps')
+    res_all_pc = karma_control.get_all_time_champions_by_plat_coop('pc')
+    res_all_xbox = karma_control.get_all_time_champions_by_plat_coop('xbox')
+    try:
+        TABLE_All = format_multiple_table(res_all_psx, res_all_pc, res_all_xbox, 10)
+    except IndexError as err:
+        print(err)
+    
+    
     today_date = date.today()
     image = InlineImage(path="assets/hof_summonsign_banner.png", caption="The fire fades... plin, plin, plon..")
     media = {"image1": image}
@@ -82,7 +111,6 @@ def main():
     try:
         sub_post = reddit.subreddit(sub).submit(title=TITLE.format(today_date.year, today_date.month, today_date.day), flair_id="b847e3d0-5469-11eb-adff-0e82fa5aa449", inline_media=media,  selftext=REPLY_TEXT, send_replies=False)
         sub_post.mod.distinguish(how="yes")
-        # sub_post.mod.distinguish(how="no")
         sub_post.mod.sticky(state=True)
         sub_post.mod.suggested_sort(sort="confidence")
     except Exception as err:

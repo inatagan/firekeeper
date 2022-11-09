@@ -16,6 +16,21 @@ CREATE_KARMA_TABLE = """CREATE TABLE IF NOT EXISTS karma (
         );"""
 
 
+# this table is used as a soft delete and as well can store the unused karma score of users that are banned or included in the non participant table.
+CREATE_KARMA_TABLE_NON_PARTICIPANT = """CREATE TABLE IF NOT EXISTS karma (
+            id INTEGER NOT NULL PRIMARY KEY,
+            from_user TEXT NOT NULL,
+            to_user TEXT NOT NULL,
+            submission_id TEXT,
+            comment_id TEXT,
+            submission_title TEXT,
+            platform TEXT,
+            subreddit TEXT,
+            date DATETIME DEFAULT CURRENT_TIMESTAMP,
+            CONSTRAINT unq UNIQUE (from_user, to_user, submission_id)
+        );"""
+
+
 CREATE_NON_PARTICIPANT_TABLE = """CREATE TABLE IF NOT EXISTS non_participant(
             id INTEGER NOT NULL PRIMARY KEY,
             username TEXT NOT NULL,
