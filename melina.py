@@ -59,32 +59,32 @@ def main():
                     if comment.body.lower().strip().startswith(("+karma", "\\+karma")):
                         if comment.is_root:
                             ERROR_TOP_LEVEL=f"Foul tarnished /u/{comment.author}, thee can't award +karma from a top level comment!! \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger, comment, ERROR_TOP_LEVEL)
+                            k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_TOP_LEVEL, lock_reply=True)
                         elif not comment.is_submitter and not comment.parent().is_submitter:
                             ERROR_USER_DENIED=f"Unworthy tarnished /u/{comment.author}, I'm searching for my purpose given to me by my mother inside the Erdtree long ago, for the reason that I yet live, burned and bodyless.. I've acted the finger maiden yet I can offer no guidance, I am no maiden. My purpose was long ago lost...  \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger, comment, ERROR_USER_DENIED)
+                            k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_USER_DENIED, lock_reply=True)
                         elif comment.is_submitter and comment.parent().is_submitter:
                             ERROR_GREEDY_USER=f"Lowly tarnished /u/{comment.author}, I shall not let you award +karma to yourself!! Destined Death is upon you!  \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger, comment, ERROR_GREEDY_USER)
+                            k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_GREEDY_USER, lock_reply=True)
                         elif comment.parent().author == '-Melina':
                             ERROR_FORBIDDEN_USER=f"/u/{comment.author}, thank you for the +karma thou'st given. But I am merely playing the role of a maiden and not meant to have +karma. It is forbidden!! \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger, comment, ERROR_FORBIDDEN_USER)
+                            k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_FORBIDDEN_USER, lock_reply=True)
                         elif not k.verify_negotiation(comment.author, comment.parent().author, comment, comment.parent()):
                             ERROR_NEGOTIATION_FAIL=f"Disgraced /u/{comment.author}! Please put a stop to this madness. The Lord of Frenzied Flame is no lord at all. When the land they preside over is lifeless!! \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger, comment, ERROR_NEGOTIATION_FAIL)
+                            k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_NEGOTIATION_FAIL, lock_reply=True)
                         elif k.is_non_participant(comment.parent().author.name):
                             NON_PARTICIPANT_REPLY=f"Tarnished guided by grace /u/{comment.author}, in the name of Queen Marika the Eternal I shall turn your runes into strength!  \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger, comment, NON_PARTICIPANT_REPLY)
+                            k.moderator_safe_reply(logger=logger, comment=comment, message=NON_PARTICIPANT_REPLY, lock_reply=True)
                         else:
                             try:
                                 plat = k.get_platform(comment.submission.title)
                                 k.add_karma_to_db(comment.author.name, comment.parent().author.name, comment.link_id, comment.id, comment.submission.title, plat, comment.subreddit.display_name)
                             except IntegrityError:
                                 ERROR_ALREADY_AWARDED=f"Foul tarnished /u/{comment.author}, thee has't already award'd +karma to *this* user!! \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
-                                k.moderator_safe_reply(logger,comment, ERROR_ALREADY_AWARDED)
+                                k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_ALREADY_AWARDED, lock_reply=True)
                             except Exception:
                                 ERROR_UNKNOWN=f"Forgive me tarnished /u/{comment.author}, something wenteth wrong!!  \n\n ***  \n Prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
-                                k.moderator_safe_reply(logger, comment, ERROR_UNKNOWN)
+                                k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_UNKNOWN, lock_reply=True)
                                 logger.exception('THIS CANNOT CONTINUE.. {}'.format(comment.permalink))
                             else:
                                 try:
@@ -92,7 +92,7 @@ def main():
                                 except Exception:
                                     logger.exception('FLAIRSYNC FAILED {}'.format(comment.permalink))
                                 SUCCESS_REPLY=f"Tarnished guided by grace /u/{comment.author}, in the name of Queen Marika the Eternal I shall grant +karma to user /u/{comment.parent().author.name}!  \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
-                                k.moderator_safe_reply(logger, comment, SUCCESS_REPLY)
+                                k.moderator_safe_reply(logger=logger, comment=comment, message=SUCCESS_REPLY, lock_reply=True)
                                 if any(word in comment.body.lower() for word in ('close', 'complete', 'thanks', 'gg')) and comment.is_submitter:
                                     post = comment.submission
                                     try:

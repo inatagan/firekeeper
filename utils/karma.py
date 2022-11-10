@@ -383,7 +383,7 @@ def get_all_time_champions_from_subreddit_by_plat(subreddit, platform):
     return result_list
 
 
-def moderator_safe_reply(logger, comment, message):
+def moderator_safe_reply(logger, comment, message, distinguish_reply=False, sticky_reply=False, lock_reply=False):
     permalink = comment.permalink
     try:
         bot_reply = comment.reply(body=message)
@@ -392,8 +392,12 @@ def moderator_safe_reply(logger, comment, message):
         logger.exception('REPLY FAIL: {}'.format(permalink))
         return False
     else:
-        bot_reply.mod.distinguish(how="yes")
-        bot_reply.mod.lock()
+        if sticky_reply:
+            bot_reply.mod.distinguish(sticky=True)
+        elif distinguish_reply:
+            bot_reply.mod.distinguish(how="yes")
+        if lock_reply:
+            bot_reply.mod.lock()
     logger.debug('REPLIED TO: {}'.format(permalink))
     return True
 

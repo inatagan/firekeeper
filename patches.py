@@ -59,32 +59,32 @@ def main():
                     if comment.body.lower().strip().startswith(("+karma", "\\+karma")):
                         if comment.is_root:
                             ERROR_TOP_LEVEL=f"Oi /u/{comment.author} just hold your horses a moment, you can't award +karma from a top level comment!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger, comment, ERROR_TOP_LEVEL)
+                            k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_TOP_LEVEL, lock_reply=True)
                         elif not comment.is_submitter and not comment.parent().is_submitter:
                             ERROR_USER_DENIED=f"Stingy little beggar /u/{comment.author}, you can't do that. Try to find it in your heart next time, eh?!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger, comment, ERROR_USER_DENIED)
+                            k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_USER_DENIED, lock_reply=True)
                         elif comment.is_submitter and comment.parent().is_submitter:
                             ERROR_GREEDY_USER=f"Shame on you, you insatiable wench /u/{comment.author}, you can't award +karma to yourself greedy guts!!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger, comment, ERROR_GREEDY_USER)
+                            k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_GREEDY_USER, lock_reply=True)
                         elif comment.parent().author == '-Melina':
                             ERROR_FORBIDDEN_USER=f"Sorry /u/{comment.author} are you a cleric or something? And you are trying to award +karma to the wrong user!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger, comment, ERROR_FORBIDDEN_USER)
+                            k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_FORBIDDEN_USER, lock_reply=True)
                         elif not k.verify_negotiation(comment.author, comment.parent().author, comment, comment.parent()):
                             ERROR_NEGOTIATION_FAIL=f"Thought you could outwit an onion? /u/{comment.author} I see no evidence that a trade has ocurred!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger, comment, ERROR_NEGOTIATION_FAIL)
+                            k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_NEGOTIATION_FAIL, lock_reply=True)
                         elif k.is_non_participant(comment.parent().author.name):
                             NON_PARTICIPANT_REPLY=f"Cheers for that! /u/{comment.author} you have awarded +karma!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger, comment, NON_PARTICIPANT_REPLY)
+                            k.moderator_safe_reply(logger=logger, comment=comment, message=NON_PARTICIPANT_REPLY, lock_reply=True)
                         else:
                             try:
                                 plat = k.get_platform(comment.submission.title)
                                 k.add_karma_to_db(comment.author.name, comment.parent().author.name, comment.link_id, comment.id, comment.submission.title, plat, comment.subreddit.display_name)
                             except IntegrityError:
                                 ERROR_ALREADY_AWARDED=f"Thought you could outwit an onion? /u/{comment.author} you have already awarded +karma to *this* user!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
-                                k.moderator_safe_reply(logger,comment, ERROR_ALREADY_AWARDED)
+                                k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_ALREADY_AWARDED, lock_reply=True)
                             except Exception:
                                 ERROR_UNKNOWN=f"Shame on you, you rotten cleric /u/{comment.author} something went wrong! But I'll forgive you. View it as a learning experience. At any rate, it's nice just to see you safe!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
-                                k.moderator_safe_reply(logger, comment, ERROR_UNKNOWN)
+                                k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_UNKNOWN, lock_reply=True)
                                 logger.exception('THIS CANNOT CONTINUE.. {}'.format(comment.permalink))
                             else:
                                 try:
@@ -92,7 +92,7 @@ def main():
                                 except Exception:
                                     logger.exception('FLAIRSYNC FAILED {}'.format(comment.permalink))
                                 SUCCESS_REPLY=f"Cheers for that! /u/{comment.author} you have awarded +karma to user /u/{comment.parent().author.name}!  \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
-                                k.moderator_safe_reply(logger, comment, SUCCESS_REPLY)
+                                k.moderator_safe_reply(logger=logger, comment=comment, message=SUCCESS_REPLY, lock_reply=True)
                                 if any(word in comment.body.lower() for word in ('close', 'complete', 'thanks', 'gg')) and comment.is_submitter:
                                     post = comment.submission
                                     try:
