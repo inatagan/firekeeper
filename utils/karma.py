@@ -206,7 +206,7 @@ def delete_all_karma_from_user(username):
     try:
         connection = db.connect()
         db.create_tables(connection)
-        db.delete_all(connection, username)
+        db.soft_delete_all_karma(connection, username)
     except Exception as err:
         raise
     else:
@@ -240,6 +240,8 @@ def add_non_participant_to_db(username, subreddit):
         raise
     except Exception:
         raise
+    else:
+        flairsync.main(username)
 
 
 def remove_non_participant_to_db(username, subreddit):
@@ -251,6 +253,8 @@ def remove_non_participant_to_db(username, subreddit):
         raise
     except Exception:
         raise
+    else:
+        flairsync.main(username)
 
 
 def is_non_participant(username):

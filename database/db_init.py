@@ -17,7 +17,7 @@ CREATE_KARMA_TABLE = """CREATE TABLE IF NOT EXISTS karma (
 
 
 # this table is used as a soft delete and as well can store the unused karma score of users that are banned or included in the non participant table.
-CREATE_KARMA_TABLE_NON_PARTICIPANT = """CREATE TABLE IF NOT EXISTS karma (
+CREATE_KARMA_TABLE_NON_PARTICIPANT = """CREATE TABLE IF NOT EXISTS karma_non_participant (
             id INTEGER NOT NULL PRIMARY KEY,
             from_user TEXT NOT NULL,
             to_user TEXT NOT NULL,
@@ -101,6 +101,19 @@ GET_ALL_TIME_CHAMPIONS_FROM_SUBREDDIT = """SELECT to_user, COUNT(to_user) FROM k
 
 
 GET_ALL_TIME_CHAMPIONS_FROM_SUBREDDIT_BY_PLAT = """SELECT to_user, COUNT(to_user) FROM karma WHERE to_user NOT IN (SELECT username FROM non_participant GROUP BY username) AND subreddit = ? AND platform LIKE ? GROUP BY to_user ORDER BY COUNT(to_user) DESC LIMIT 10;"""
+
+
+SOFT_DELETE_ALL_KARMA = """INSERT INTO karma_non_participant SELECT
+            id,
+            from_user,
+            to_user,
+            submission_id,
+            comment_id,
+            submission_title,
+            platform,
+            subreddit,
+            date
+            FROM karma WHERE to_user = ?;"""
 
 
 DELETE_ALL_KARMA = """DELETE FROM karma WHERE to_user = ?;"""
@@ -214,6 +227,13 @@ def get_all_time_champions_from_subreddit(connection, subreddit):
 def get_all_time_champions_from_subreddit_by_plat(connection, subreddit, platform):
     with connection:
         return connection.execute(GET_ALL_TIME_CHAMPIONS_FROM_SUBREDDIT_BY_PLAT, (subreddit, f"{platform}%")).fetchall()
+
+
+def soft_delete_all_karma(connection, username):
+    with connection:
+        connection.execute(CREATE_KARMA_TABLE_NON_PARTICIPANT)
+        connection.execute(SOFT_DELETE_ALL_KARMA, (username,))
+        connection.execute(DELETE_ALL_KARMA, (username,))
 
 
 def delete_all(connection, username):

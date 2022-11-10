@@ -150,7 +150,6 @@ def main():
                                 logger.exception('FAIL TO ADD NON PARTIPANT: {}'.format(username))
                             else:
                                 item.reply(body=f"SUCCESS: u/{username} added to non participant")
-                                flairsync.main(username)
                         if 'remove non participant' in item.subject:
                             username = item.body
                             try:
