@@ -225,10 +225,10 @@ def delete_karma_by_comment_id(comment_id, my_username, reddit):
         flairsync.main(comment.parent().author.name)
         comment.downvote()
         comment.refresh()
-        replies = comment.replies.replace_more(limit=None)
-        for comment in replies.list():
-            if comment.author == my_username:
-                comment.delete()
+        comment.replies.replace_more(limit=None)
+        for reply in comment.replies.list():
+            if reply.author == my_username:
+                reply.delete()
 
 
 def add_non_participant_to_db(username, subreddit):
@@ -408,7 +408,6 @@ def moderator_safe_reply(logger, comment, message, distinguish_reply=False, stic
 
 def submission_clear(submission, my_username, logger):
     connection = db.connect()
-    # submission = award_comment.submission
     submission.comments.replace_more(limit=None)
     for comment in submission.comments.list():
         if comment.author == my_username:
