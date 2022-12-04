@@ -43,7 +43,7 @@ def main():
         #multiple streams
         comment_stream = subreddit.stream.comments(pause_after=-1, skip_existing=True)
         mod_log_stream = subreddit.mod.stream.log(pause_after=-1, skip_existing=True)
-        # modmail_stream = subreddit.mod.stream.modmail_conversations(pause_after=-1, skip_existing=True)
+        modmail_stream = subreddit.mod.stream.modmail_conversations(pause_after=-1, skip_existing=True)
         inbox_stream = reddit.inbox.stream(pause_after=-1, skip_existing=True)
         
         
@@ -122,17 +122,17 @@ def main():
                             logger.exception('FAIL TO SET USERFLAIR: {}'.format(log.target_author))
                 
 
-                # for modmail in modmail_stream:
-                #     if modmail is None:
-                #         break
-                #     if any(subject in modmail.subject.lower() for subject in ("about the false maiden", "about+the+false+maiden")):
-                #         conversation = subreddit.modmail(modmail.id, mark_read=True)
-                #         for message in conversation.messages:
-                #             if any(shabriri_grape in message.body_markdown.lower() for shabriri_grape in ("shabriri", "grape", "have", "one")):
-                #                 try:
-                #                     modmail.reply(body=f"Disgraced /u/{message.author}! *You...* have inherited the Frenzied Flame. A pity. You are no longer fit. Our journey together ends here. And remember... Should you rise as the Lord of Chaos, I will kill you, as sure as night follows day. Such is my duty, for allowing you the strength of runes. Goodbye, my companion. Goodbye, Torrent... I will seek you, as far as you may travel... To deliver you what is yours. **Destined Death**. \n\n *** \n I am a bot, and this action was performed automatically.", author_hidden=False)
-                #                 except:
-                #                     logger.exception('FAIL TO REPLY MODMAIL: {}'.format(modmail.id))
+                for modmail in modmail_stream:
+                    if modmail is None:
+                        break
+                    if any(subject in modmail.subject.lower() for subject in ("karma exchange", "karma+exchange")):
+                        conversation = subreddit.modmail(modmail.id, mark_read=True)
+                        # for message in conversation.messages:
+                        #     if any(shabriri_grape in message.body_markdown.lower() for shabriri_grape in ("shabriri", "grape", "have", "one")):
+                        try:
+                            conversation.reply(body=f"Hello /u/{conversation.user}! If you are reading this message you have reached out to me Patches to request a karma exchange, unfortunately for you the karma exchange period is over and this request is no longer available. Thank you for your cooperation. \n\n *** \n I am a bot, and this action was performed automatically.", author_hidden=False)
+                        except:
+                            logger.exception('FAIL TO REPLY MODMAIL: {}'.format(modmail.id))
 
 
                 for item in inbox_stream:
