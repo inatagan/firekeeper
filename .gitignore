@@ -8,6 +8,7 @@ __pycache__/
 
 # Database
 *.db
+*.db.bak
 
 # Distribution / packaging
 .Python
@@ -136,3 +137,4 @@ dmypy.json
 schierke.py
 btf_patch_notes_1_06.py
 summonsign.db.bak
+db_archive/
