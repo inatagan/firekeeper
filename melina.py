@@ -79,6 +79,8 @@ def main():
                             try:
                                 plat = k.get_platform(comment.submission.title)
                                 k.add_karma_to_db(comment.author.name, comment.parent().author.name, comment.link_id, comment.id, comment.submission.title, plat, comment.subreddit.display_name)
+                                # DOUBLE KARMA WEEK
+                                k.add_karma_to_db(comment.author.name, comment.parent().author.name, f'{comment.link_id}_DOUBLE', comment.id, comment.submission.title, plat, comment.subreddit.display_name)
                             except IntegrityError:
                                 ERROR_ALREADY_AWARDED=f"Foul tarnished /u/{comment.author}, thee has't already award'd +karma to *this* user!! \n\n ***  \n Good-bye, should you come by a Shabriri Grape, [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+false+maiden&message=) of /r/{subreddit}."
                                 k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_ALREADY_AWARDED, lock_reply=True)
@@ -99,6 +101,8 @@ def main():
                                         post.mod.flair(text=":sunbro: Duty Fulfilled!", css_class="duty-fulfilled", flair_template_id="186b0ec2-9343-11ec-b414-cefd332e8238")
                                     except:
                                         logger.exception('FAILED TO CLOSE SUBMISSION {}'.format(comment.submission.permalink))
+                                # DOUBLE WEEK REPLY, REMOVE AFTER END
+                                k.moderator_safe_reply(logger=logger, comment=comment, message=SUCCESS_REPLY, lock_reply=True)
                 
                 
                 for log in mod_log_stream:
