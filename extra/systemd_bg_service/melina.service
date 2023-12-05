@@ -11,7 +11,7 @@ Restart=on-failure
 RestartSec=5s  
 Type=idle  
 WorkingDirectory= /home/$USER/firekeeper/  
-ExecStart=/usr/bin/python /home/$USER/firekeeper/melina.py  
+ExecStart=/home/$USER/firekeeper/venv/bin/python /home/$USER/firekeeper/melina.py  
 User=$USER  
 KillSignal=SIGINT  
 

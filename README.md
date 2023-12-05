@@ -7,6 +7,14 @@ It was originally made for the community [/r/SummonSign](https://www.reddit.com/
 ### How to install
 Clone this repository to it's destination.
 
+Create a Python Virtual Environment:
+
+    python3 -m venv venv
+
+Activate the Virtual Environment:
+
+    source venv/bin/activate
+
 On the root directory of this project run the command to install all the necessary dependencies:
 
     pip install -r requirements.txt
@@ -19,6 +27,7 @@ Use the env_template to set all your info required for the `.env` file.
 
 On the `extra` directory there is already a template file for the service, if you don't have any custom changes you can just copy the `.service` file to `/lib/systemd/system/` with the command:
 
+    # this template is already set to run with the VENV just replace the $USER with your user.
     sudo cp ~/firekeeper/extra/systemd_bg_service/firekeeper.service /lib/systemd/system/firekeeper.service
 
 Change the permission of the file to 644:
