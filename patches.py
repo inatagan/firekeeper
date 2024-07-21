@@ -79,6 +79,11 @@ def main():
                             try:
                                 plat = k.get_platform(comment.submission.title)
                                 k.add_karma_to_db(comment.author.name, comment.parent().author.name, comment.link_id, comment.id, comment.submission.title, plat, comment.subreddit.display_name)
+
+                                # TRIPLE KARMA WEEK
+                                k.add_karma_to_db(comment.author.name, comment.parent().author.name, f'{comment.link_id}_DOUBLE', comment.id, comment.submission.title, plat, comment.subreddit.display_name)
+                                k.add_karma_to_db(comment.author.name, comment.parent().author.name, f'{comment.link_id}_TRIPLE', comment.id, comment.submission.title, plat, comment.subreddit.display_name)
+
                             except IntegrityError:
                                 ERROR_ALREADY_AWARDED=f"Thought you could outwit an onion? /u/{comment.author} you have already awarded +karma to *this* user!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
                                 k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_ALREADY_AWARDED, lock_reply=True)
@@ -125,12 +130,14 @@ def main():
                 for modmail in modmail_stream:
                     if modmail is None:
                         break
-                    if any(subject in modmail.subject.lower() for subject in ("karma exchange", "karma+exchange")):
-                        conversation = subreddit.modmail(modmail.id, mark_read=True)
-                        # for message in conversation.messages:
-                        #     if any(shabriri_grape in message.body_markdown.lower() for shabriri_grape in ("shabriri", "grape", "have", "one")):
+                    conversation = subreddit.modmail(modmail.id, mark_read=False)
+                    if not k.is_user_older_than_1week(conversation.user):
                         try:
-                            conversation.reply(body=f"Hello /u/{conversation.user}! If you are reading this message you have reached out to me Patches to request a karma exchange, unfortunately for you the karma exchange period is over and this request is no longer available. Thank you for your cooperation. \n\n *** \n I am a bot, and this action was performed automatically.", author_hidden=False)
+                            conversation.reply(body=f"Hello /u/{conversation.user}! If you are reading this message you have reached out to me Patches to request something silly, unfortunately for you I already told you that new accounts are required to be at least 1 week old to participate in our community, no I will not make an exception! \n\n *** \n I am a bot, and this action was performed automatically.", author_hidden=False)
+
+                            conversation.read(other_conversations=conversation.user.recent_convos)
+                            conversation.archive()
+
                         except:
                             logger.exception('FAIL TO REPLY MODMAIL: {}'.format(modmail.id))
 

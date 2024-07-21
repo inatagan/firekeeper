@@ -4,6 +4,7 @@ from sqlite3 import IntegrityError
 from prawcore.exceptions import NotFound
 import praw.exceptions
 import flairsync
+import time
 
 
 #Tuple containing subreddit valid css_class
@@ -419,3 +420,10 @@ def submission_clear(submission, my_username, logger):
             else:
                 flairsync.main(comment_karma.parent().author.name)
                 comment.delete()
+
+def is_user_older_than_1week(user):
+    redditor=user
+    created_at=redditor.created_utc
+    now=time.time()
+    if now - created_at > 604800:
+        return True
