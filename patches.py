@@ -104,7 +104,10 @@ def main():
                                         post.mod.flair(text="Complete!", css_class="duty-fulfilled", flair_template_id="a9bcc130-9a8d-11ec-820c-aa2f5c846ca8")
                                     except:
                                         logger.exception('FAILED TO CLOSE SUBMISSION {}'.format(comment.submission.permalink))
-                
+                                # TRIPLE WEEK REPLY, REMOVE AFTER END
+                                k.moderator_safe_reply(logger=logger, comment=comment, message=SUCCESS_REPLY, lock_reply=True)
+                                k.moderator_safe_reply(logger=logger, comment=comment, message=SUCCESS_REPLY, lock_reply=True)
+
                 
                 for log in mod_log_stream:
                     if log is None:
