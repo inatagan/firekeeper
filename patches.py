@@ -81,8 +81,8 @@ def main():
                                 k.add_karma_to_db(comment.author.name, comment.parent().author.name, comment.link_id, comment.id, comment.submission.title, plat, comment.subreddit.display_name)
 
                                 # TRIPLE KARMA WEEK
-                                k.add_karma_to_db(comment.author.name, comment.parent().author.name, f'{comment.link_id}_DOUBLE', comment.id, comment.submission.title, plat, comment.subreddit.display_name)
-                                k.add_karma_to_db(comment.author.name, comment.parent().author.name, f'{comment.link_id}_TRIPLE', comment.id, comment.submission.title, plat, comment.subreddit.display_name)
+                                # k.add_karma_to_db(comment.author.name, comment.parent().author.name, f'{comment.link_id}_DOUBLE', comment.id, comment.submission.title, plat, comment.subreddit.display_name)
+                                # k.add_karma_to_db(comment.author.name, comment.parent().author.name, f'{comment.link_id}_TRIPLE', comment.id, comment.submission.title, plat, comment.subreddit.display_name)
 
                             except IntegrityError:
                                 ERROR_ALREADY_AWARDED=f"Thought you could outwit an onion? /u/{comment.author} you have already awarded +karma to *this* user!! \n\n ---  \n Don't forget to pop back for another visit, friend. I'll be ready to wheel and deal. Shouldst thee needeth [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+Patches&message=) of /r/{subreddit}."
@@ -105,8 +105,8 @@ def main():
                                     except:
                                         logger.exception('FAILED TO CLOSE SUBMISSION {}'.format(comment.submission.permalink))
                                 # TRIPLE WEEK REPLY, REMOVE AFTER END
-                                k.moderator_safe_reply(logger=logger, comment=comment, message=SUCCESS_REPLY, lock_reply=True)
-                                k.moderator_safe_reply(logger=logger, comment=comment, message=SUCCESS_REPLY, lock_reply=True)
+                                # k.moderator_safe_reply(logger=logger, comment=comment, message=SUCCESS_REPLY, lock_reply=True)
+                                # k.moderator_safe_reply(logger=logger, comment=comment, message=SUCCESS_REPLY, lock_reply=True)
 
                 
                 for log in mod_log_stream:
