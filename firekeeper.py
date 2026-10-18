@@ -1,126 +1,217 @@
 import logging
 import os
-import praw
-import flairsync
 import time
-from dotenv import load_dotenv
 from sqlite3 import IntegrityError
-from utils import karma as k
-from prawcore.exceptions import PrawcoreException
+
+import praw
+from dotenv import load_dotenv
 from praw.models import Message
+from prawcore.exceptions import PrawcoreException
 
-
-
+import flairsync
+from utils import karma as k
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s [ %(levelname)s ] | [ %(name)s ]: %(message)s')
-log_file_handler = logging.FileHandler('firekeeper.log')
+formatter = logging.Formatter(
+    "%(asctime)s [ %(levelname)s ] | [ %(name)s ]: %(message)s"
+)
+log_file_handler = logging.FileHandler("firekeeper.log")
 log_file_handler.setFormatter(formatter)
 logger.addHandler(log_file_handler)
-
-
 
 
 def main():
     load_dotenv()
     reddit = praw.Reddit(
-        client_id=os.environ.get('my_client_id'),
-        client_secret=os.environ.get('my_client_secret'),
-        user_agent=os.environ.get('my_user_agent'),
-        username=os.environ.get('my_username'),
-        password=os.environ.get('my_password'),
+        client_id=os.environ.get("my_client_id"),
+        client_secret=os.environ.get("my_client_secret"),
+        user_agent=os.environ.get("my_user_agent"),
+        username=os.environ.get("my_username"),
+        password=os.environ.get("my_password"),
     )
-    my_sub = os.environ.get('my_subreddit')
-    my_username = os.environ.get('my_username')
+    my_sub = os.environ.get("my_subreddit")
+    my_username = os.environ.get("my_username")
     subreddit = reddit.subreddit(my_sub)
-
 
     running = True
     while running:
-
-
-        #multiple streams
+        # multiple streams
         comment_stream = subreddit.stream.comments(pause_after=-1, skip_existing=True)
         mod_log_stream = subreddit.mod.stream.log(pause_after=-1, skip_existing=True)
         # modmail_stream = subreddit.mod.stream.modmail_conversations(pause_after=-1, skip_existing=True)
         inbox_stream = reddit.inbox.stream(pause_after=-1, skip_existing=True)
-        
-        
+
         try:
-
-
             while running:
-
-
                 for comment in comment_stream:
                     if comment is None:
                         break
                     if comment.body.lower().strip().startswith(("+karma", "\\+karma")):
                         if comment.is_root:
                             ERROR_TOP_LEVEL = f"F'rgive me /u/{comment.author}, thee can't award +karma from a top leveleth comment!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_TOP_LEVEL, lock_reply=True)
-                        elif not comment.is_submitter and not comment.parent().is_submitter:
+                            k.moderator_safe_reply(
+                                logger=logger,
+                                comment=comment,
+                                message=ERROR_TOP_LEVEL,
+                                lock_reply=True,
+                            )
+                        elif (
+                            not comment.is_submitter
+                            and not comment.parent().is_submitter
+                        ):
                             ERROR_USER_DENIED = f"Ashen one /u/{comment.author}, the *First Flame* quickly fades. Darkness will shortly settle. But one day, tiny flames will dance across the darkness. Like embers, linked by past Lords. Ashen one hearest thou my voice, still?!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_USER_DENIED, lock_reply=True)
+                            k.moderator_safe_reply(
+                                logger=logger,
+                                comment=comment,
+                                message=ERROR_USER_DENIED,
+                                lock_reply=True,
+                            )
                         elif comment.is_submitter and comment.parent().is_submitter:
                             ERROR_GREEDY_USER = f"F'rgive me /u/{comment.author}, thee can't award +karma to yourself!!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_GREEDY_USER, lock_reply=True)
-                        elif comment.parent().author == '-Firekeeper-':
+                            k.moderator_safe_reply(
+                                logger=logger,
+                                comment=comment,
+                                message=ERROR_GREEDY_USER,
+                                lock_reply=True,
+                            )
+                        elif comment.parent().author == "-Firekeeper-":
                             ERROR_FORBIDDEN_USER = f"/u/{comment.author}, my thanks for the +karma thou'st given. But Firekeepers are not meant to have +karma. It is forbidden!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_FORBIDDEN_USER, lock_reply=True)
-                        elif not k.verify_negotiation(comment.author, comment.parent().author, comment, comment.parent()):
+                            k.moderator_safe_reply(
+                                logger=logger,
+                                comment=comment,
+                                message=ERROR_FORBIDDEN_USER,
+                                lock_reply=True,
+                            )
+                        elif not k.verify_negotiation(
+                            comment.author,
+                            comment.parent().author,
+                            comment,
+                            comment.parent(),
+                        ):
                             ERROR_NEGOTIATION_FAIL = f"/u/{comment.author}, the fire fades and the Lords go without thrones. Surrender your fires, to the true heir. Let him grant Death.. to the old gods of Lordran, deliverers of the *First Flame*!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_NEGOTIATION_FAIL, lock_reply=True)
+                            k.moderator_safe_reply(
+                                logger=logger,
+                                comment=comment,
+                                message=ERROR_NEGOTIATION_FAIL,
+                                lock_reply=True,
+                            )
                         elif k.is_non_participant(comment.parent().author.name):
                             NON_PARTICIPANT_REPLY = f"/u/{comment.author}, my thanks for the +karma thou'st given!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}."
-                            k.moderator_safe_reply(logger=logger, comment=comment, message=NON_PARTICIPANT_REPLY, lock_reply=True)
+                            k.moderator_safe_reply(
+                                logger=logger,
+                                comment=comment,
+                                message=NON_PARTICIPANT_REPLY,
+                                lock_reply=True,
+                            )
                         else:
                             try:
                                 plat = k.get_platform(comment.submission.title)
-                                k.add_karma_to_db(comment.author.name, comment.parent().author.name, comment.link_id, comment.id, comment.submission.title, plat, comment.subreddit.display_name)
+                                k.add_karma_to_db(
+                                    comment.author.name,
+                                    comment.parent().author.name,
+                                    comment.link_id,
+                                    comment.id,
+                                    comment.submission.title,
+                                    plat,
+                                    comment.subreddit.display_name,
+                                )
                             except IntegrityError:
                                 ERROR_ALREADY_AWARDED = f"F'rgive me /u/{comment.author}, thee has't already award'd +karma to *this* us'r!! \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}."
-                                k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_ALREADY_AWARDED, lock_reply=True)
+                                k.moderator_safe_reply(
+                                    logger=logger,
+                                    comment=comment,
+                                    message=ERROR_ALREADY_AWARDED,
+                                    lock_reply=True,
+                                )
                             except Exception:
                                 ERROR_UNKNOWN = f"Forgive me /u/{comment.author}, something wenteth wrong!!  \n\n ***  \n Prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}."
-                                k.moderator_safe_reply(logger=logger, comment=comment, message=ERROR_UNKNOWN, lock_reply=True)
-                                logger.exception('THIS CANNOT CONTINUE.. {}'.format(comment.permalink))
+                                k.moderator_safe_reply(
+                                    logger=logger,
+                                    comment=comment,
+                                    message=ERROR_UNKNOWN,
+                                    lock_reply=True,
+                                )
+                                logger.exception(
+                                    "THIS CANNOT CONTINUE.. {}".format(
+                                        comment.permalink
+                                    )
+                                )
                             else:
                                 try:
                                     flairsync.main(comment.parent().author.name)
                                 except Exception:
-                                    logger.exception('FLAIRSYNC FAILED {}'.format(comment.permalink))
+                                    logger.exception(
+                                        "FLAIRSYNC FAILED {}".format(comment.permalink)
+                                    )
                                 SUCCESS_REPLY = f"/u/{comment.author}, my thanks for the +karma thou'st given to us'r /u/{comment.parent().author.name}!  \n\n ***  \n Farewell, ashen one. Mayst thou thy peace discov'r. If thine heart should bend, prithee [contact the moderators](https://www.reddit.com/message/compose?to=/r/{subreddit}&subject=About+the+Firekeeper&message=) of /r/{subreddit}."
-                                k.moderator_safe_reply(logger=logger, comment=comment, message=SUCCESS_REPLY, lock_reply=True)
-                                if any(word in comment.body.lower() for word in ('close', 'complete', 'thanks', 'gg')) and comment.is_submitter:
+                                k.moderator_safe_reply(
+                                    logger=logger,
+                                    comment=comment,
+                                    message=SUCCESS_REPLY,
+                                    lock_reply=True,
+                                )
+                                if (
+                                    any(
+                                        word in comment.body.lower()
+                                        for word in (
+                                            "close",
+                                            "complete",
+                                            "thanks",
+                                            "gg",
+                                        )
+                                    )
+                                    and comment.is_submitter
+                                ):
                                     post = comment.submission
                                     try:
-                                        post.mod.flair(text=":sunbro: Duty Fulfilled!", css_class="duty-fulfilled", flair_template_id="25213842-1029-11e6-ba76-0ecc83f85b2b")
+                                        post.mod.flair(
+                                            text=":sunbro: Duty Fulfilled!",
+                                            css_class="duty-fulfilled",
+                                            flair_template_id="25213842-1029-11e6-ba76-0ecc83f85b2b",
+                                        )
                                     except:
-                                        logger.exception('FAILED TO CLOSE SUBMISSION {}'.format(comment.submission.permalink))
-
+                                        logger.exception(
+                                            "FAILED TO CLOSE SUBMISSION {}".format(
+                                                comment.submission.permalink
+                                            )
+                                        )
 
                 for log in mod_log_stream:
                     if log is None:
                         break
                     if log.action == "removelink":
                         try:
-                            submission = reddit.submission(url=f"https://www.reddit.com{log.target_permalink}")
+                            submission = reddit.submission(
+                                url=f"https://www.reddit.com{log.target_permalink}"
+                            )
                         except:
-                            logger.exception('FAIL TO RETRIEVE PERMALINK: {}'.format(log.target_permalink))
+                            logger.exception(
+                                "FAIL TO RETRIEVE PERMALINK: {}".format(
+                                    log.target_permalink
+                                )
+                            )
                         else:
                             k.submission_clear(submission, my_username, logger)
                     if log.action == "banuser" and log.details == "permanent":
                         try:
-                            k.add_non_participant_to_db(log.target_author, subreddit.display_name)
+                            k.add_non_participant_to_db(
+                                log.target_author, subreddit.display_name
+                            )
                         except:
-                            logger.exception('FAIL TO ADD TO DB_NON_PARTICIPANT: {}'.format(log.target_author))
+                            logger.exception(
+                                "FAIL TO ADD TO DB_NON_PARTICIPANT: {}".format(
+                                    log.target_author
+                                )
+                            )
                         try:
-                            subreddit.flair.set(log.target_author, text="quarantined", css_class="red")
+                            subreddit.flair.set(
+                                log.target_author, text="quarantined", css_class="red"
+                            )
                         except:
-                            logger.exception('FAIL TO SET USERFLAIR: {}'.format(log.target_author))
-                
+                            logger.exception(
+                                "FAIL TO SET USERFLAIR: {}".format(log.target_author)
+                            )
 
                 # for modmail in modmail_stream:
                 #     if modmail is None:
@@ -134,80 +225,120 @@ def main():
                 #                 except:
                 #                     logger.exception('FAIL TO REPLY MODMAIL: {}'.format(modmail.id))
 
-
                 for item in inbox_stream:
                     if item is None:
                         break
                     if isinstance(item, Message):
-                        if 'add non participant' in item.subject:
+                        if "add non participant" in item.subject:
                             username = item.body
                             try:
-                                k.add_non_participant_to_db(username, subreddit.display_name)
+                                k.add_non_participant_to_db(
+                                    username, subreddit.display_name
+                                )
                             except IntegrityError:
-                                item.reply(body=f"FAIL: u/{username} already is non participant")
+                                item.reply(
+                                    body=f"FAIL: u/{username} already is non participant"
+                                )
                             except:
-                                item.reply(body=f"FAIL: u/{username} SOMETHING WENT WRONG!!")
-                                logger.exception('FAIL TO ADD NON PARTIPANT: {}'.format(username))
+                                item.reply(
+                                    body=f"FAIL: u/{username} SOMETHING WENT WRONG!!"
+                                )
+                                logger.exception(
+                                    "FAIL TO ADD NON PARTIPANT: {}".format(username)
+                                )
                             else:
-                                item.reply(body=f"SUCCESS: u/{username} added to non participant")
-                        if 'remove non participant' in item.subject:
+                                item.reply(
+                                    body=f"SUCCESS: u/{username} added to non participant"
+                                )
+                        if "remove non participant" in item.subject:
                             username = item.body
                             try:
-                                k.remove_non_participant_to_db(username, subreddit.display_name)
+                                k.remove_non_participant_to_db(
+                                    username, subreddit.display_name
+                                )
                             except:
-                                item.reply(body=f"FAIL: u/{username} SOMETHING WENT WRONG!!")
-                                logger.exception('FAIL TO ADD NON PARTIPANT: {}'.format(username))
+                                item.reply(
+                                    body=f"FAIL: u/{username} SOMETHING WENT WRONG!!"
+                                )
+                                logger.exception(
+                                    "FAIL TO ADD NON PARTIPANT: {}".format(username)
+                                )
                             else:
-                                item.reply(body=f"SUCCESS: u/{username} removed from non participant")
-                        if 'thread clear' in item.subject:
+                                item.reply(
+                                    body=f"SUCCESS: u/{username} removed from non participant"
+                                )
+                        if "thread clear" in item.subject:
                             try:
                                 submission = reddit.submission(url=f"{item.body}")
                             except:
-                                logger.exception('FAIL TO RETRIEVE PERMALINK: {}'.format(log.target_permalink))
+                                logger.exception(
+                                    "FAIL TO RETRIEVE PERMALINK: {}".format(
+                                        log.target_permalink
+                                    )
+                                )
                             else:
                                 k.submission_clear(submission, my_username, logger)
-                                item.reply(body=f"SUCCESS: submission cleaned: {submission.permalink}")
-                        if 'sync karma' in item.subject:
+                                item.reply(
+                                    body=f"SUCCESS: submission cleaned: {submission.permalink}"
+                                )
+                        if "sync karma" in item.subject:
                             info = []
                             for data in item.body.split(","):
                                 info.append(data.strip())
                             try:
-                                k.sync_karma_to_db(username=info[0],karma=int(info[1]), platform=info[2], subreddit=subreddit.display_name)
+                                k.sync_karma_to_db(
+                                    username=info[0],
+                                    karma=int(info[1]),
+                                    platform=info[2],
+                                    subreddit=subreddit.display_name,
+                                )
                             except:
-                                logger.exception('FAIL TO SYNC USER_KARMA: {}'.format(info))
+                                logger.exception(
+                                    "FAIL TO SYNC USER_KARMA: {}".format(info)
+                                )
                             else:
                                 item.reply(body=f"SUCCESS: u/{info[0]} flair updated!!")
-                                subreddit.modmail.create(subject="karma exchange", body="karma exchange complete.\n\n---", recipient=info[0])
-                        if 'delete all karma' in item.subject:
+                                subreddit.modmail.create(
+                                    subject="karma exchange",
+                                    body="karma exchange complete.\n\n---",
+                                    recipient=info[0],
+                                )
+                        if "delete all karma" in item.subject:
                             username = item.body
                             try:
                                 k.delete_all_karma_from_user(username)
                             except:
-                                logger.exception('FAIL TO DELETE USER_KARMA: {}'.format(username))
+                                logger.exception(
+                                    "FAIL TO DELETE USER_KARMA: {}".format(username)
+                                )
                             else:
-                                item.reply(body=f"SUCCESS: u/{item.body} karma deleted!!")
-                        if 'delete karma by comment' in item.subject:
+                                item.reply(
+                                    body=f"SUCCESS: u/{item.body} karma deleted!!"
+                                )
+                        if "delete karma by comment" in item.subject:
                             comment = reddit.comment(url=item.body)
                             try:
-                                k.delete_karma_by_comment_id(comment.id, my_username, reddit)
+                                k.delete_karma_by_comment_id(
+                                    comment.id, my_username, reddit
+                                )
                             except:
-                                logger.exception('FAIL TO DELETE COMMENT_KARMA: {}'.format(comment.permalink))
+                                logger.exception(
+                                    "FAIL TO DELETE COMMENT_KARMA: {}".format(
+                                        comment.permalink
+                                    )
+                                )
                             else:
-                                item.reply(body=f"SUCCESS: karma deleted: \n\n{comment.permalink}")
-
-
-
+                                item.reply(
+                                    body=f"SUCCESS: karma deleted: \n\n{comment.permalink}"
+                                )
 
         except KeyboardInterrupt:
-            logger.info('Termination received. Goodbye!')
+            logger.info("Termination received. Goodbye!")
             running = False
         except PrawcoreException as err:
-            logger.exception('Oops I did it again.. ERROR= {}'.format(err))
+            logger.exception("Oops I did it again.. ERROR= {}".format(err))
             time.sleep(10)
 
 
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
-
